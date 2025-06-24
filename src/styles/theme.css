@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-neon: #A7FF1A; /* Verde néon */
+  --color-bg: #000000;   /* Fundo preto */
+  --color-text: #ffffff; /* Texto branco */
+  --color-muted: #999999;
+}
