@@ -1,24 +1,33 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = "https://wkplan-backend.onrender.com/api";
+const API_URL = "https://wk-plan-backend.onrender.com/api";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token") || null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Lê o user e token do localStorage ao iniciar
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token") || null;
+  });
+
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Armazenar token e user no localStorage
+  // Atualiza localStorage sempre que user/token mudam
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
     } else {
       localStorage.removeItem("token");
     }
+
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
     } else {
@@ -26,7 +35,7 @@ export function AuthProvider({ children }) {
     }
   }, [token, user]);
 
-  // Função para validar o token e obter os dados do user
+  // Verifica token com o backend
   const authenticateUser = async () => {
     const storedToken = localStorage.getItem("token");
 
@@ -35,6 +44,7 @@ export function AuthProvider({ children }) {
         const response = await axios.get(`${API_URL}/auth/verify`, {
           headers: { Authorization: `Bearer ${storedToken}` },
         });
+
         setUser(response.data);
         setToken(storedToken);
         setIsLoggedIn(true);
@@ -49,23 +59,25 @@ export function AuthProvider({ children }) {
       setToken(null);
       setIsLoggedIn(false);
     }
+
     setIsLoading(false);
   };
 
-  // loginUser recebe dados e token do login para armazenar
+  // Login: define user e token recebidos
   const loginUser = (userData, jwtToken) => {
     setUser(userData);
     setToken(jwtToken);
     setIsLoggedIn(true);
   };
 
-  // logoutUser limpa tudo
+  // Logout: limpa tudo
   const logoutUser = () => {
     setUser(null);
     setToken(null);
     setIsLoggedIn(false);
   };
 
+  // Executa no arranque da app
   useEffect(() => {
     authenticateUser();
   }, []);

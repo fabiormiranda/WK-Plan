@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
-const API_URL = "https://wkplan-backend.onrender.com/api/auth";
+const API_URL = "https://wk-plan-backend.onrender.com/api/auth";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
