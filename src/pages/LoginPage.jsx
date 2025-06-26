@@ -26,7 +26,7 @@ function LoginPage() {
         data.token
       );
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
