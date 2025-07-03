@@ -7,10 +7,12 @@ import { AuthProvider } from "./context/AuthContext";
 
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import DashboardHome from "./pages/dashboard/DashboardHome";
-import Profile from "./pages/dashboard/Profile";
-import Exercises from "./pages/dashboard/DashboardHome"; // Usar DashboardHome para Exercises
+import Exercises from "./pages/dashboard/Exercises"; 
 import MyPlans from "./pages/dashboard/MyPlans";
+import Profile from "./pages/dashboard/Profile";
 import CreatePlan from "./pages/dashboard/CreatePlan";
+import MyPlanDetail from "./pages/dashboard/MyPlanDetail";
+import ChangePassword from "./pages/dashboard/ChangePassword.jsx";
 
 function App() {
   return (
@@ -24,12 +26,15 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
 
             {/* Dashboard com layout */}
+            
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<DashboardHome />} />
+              <Route path="create-plan" element={<CreatePlan />} />
               <Route path="exercises" element={<Exercises />} />
               <Route path="my-plans" element={<MyPlans />} />
+              <Route path="/dashboard/my-plans/:planId" element={<MyPlanDetail />} />
               <Route path="profile" element={<Profile />} />
-              <Route path="create-plan" element={<CreatePlan />} />
+              <Route path="/dashboard/change-password" element={<ChangePassword />} />
             </Route>
           </Routes>
         </div>

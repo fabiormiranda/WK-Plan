@@ -3,8 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --color-neon: #A7FF1A; /* Verde néon */
-  --color-bg: #000000;   /* Fundo preto */
-  --color-text: #ffffff; /* Texto branco */
-  --color-muted: #999999;
+  --color-bg: #111111;         /* Preto puro para fundo */
+  --color-bg-card: #23272f;    /* Cinzento escuro para cards/caixas */
+  --color-text: #ffffff;       /* Texto branco */
+  --color-muted: #999999;      /* Texto secundário */
+  --color-accent: #ff7c2d;     /* Laranja vibrante */
+  --color-accent-dark: #e65100;/* Laranja escuro para hover */
 }

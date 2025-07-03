@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 const API_URL = "https://wk-plan-backend.onrender.com/api/auth";
@@ -16,52 +16,83 @@ function SignupPage() {
     setError(null);
 
     try {
-      // Faz o POST diretamente com axios
       await axios.post(`${API_URL}/signup`, { name, email, password });
-      
       alert("Conta criada com sucesso! Agora faz login.");
       navigate("/login");
     } catch (err) {
-      // Se o backend enviar mensagem de erro, captura aqui
       const message = err.response?.data?.message || "Erro no registo";
       setError(message);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-80">
-        <h2 className="text-xl font-bold mb-4">Create Account</h2>
-
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{
+        background: "var(--color-bg)",
+        color: "var(--color-text)",
+      }}
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="bg-[var(--color-bg-card)] rounded-2xl shadow-xl w-full max-w-sm p-8 flex flex-col gap-4"
+      >
+        <div className="flex flex-col items-center mb-2">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/5956/5956416.png"
+            alt="WK-Plan logo"
+            className="w-14 h-14 mb-2"
+          />
+          <h2
+            className="text-2xl font-extrabold mb-2 tracking-tight"
+            style={{ color: "var(--color-accent)" }}
+          >
+            Create Account
+          </h2>
+        </div>
+        {error && <p className="text-red-500 text-center">{error}</p>}
         <input
-          className="w-full p-2 border mb-4"
+          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition mb-2"
           placeholder="Name"
           type="text"
+          autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
         />
         <input
-          className="w-full p-2 border mb-4"
+          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition mb-2"
           placeholder="Email"
           type="email"
+          autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
-          className="w-full p-2 border mb-4"
+          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition mb-2"
           placeholder="Password"
           type="password"
+          autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button className="w-full bg-green-500 text-white p-2 rounded" type="submit">
+        <button
+          className="w-full py-3 rounded bg-[var(--color-accent)] text-white font-bold text-lg tracking-wide shadow hover:bg-[var(--color-accent-dark)] transition"
+          type="submit"
+        >
           Register
         </button>
+        <div className="text-sm text-[var(--color-muted)] text-center mt-2">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-[var(--color-accent)] hover:underline font-semibold"
+          >
+            Login
+          </Link>
+        </div>
       </form>
     </div>
   );

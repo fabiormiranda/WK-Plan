@@ -1,50 +1,82 @@
 import React, { useContext } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 function DashboardLayout() {
   const { logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logoutUser();
     navigate("/login");
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar lateral */}
-      <aside className="w-64 bg-gray-800 text-white p-6 flex flex-col">
-        <h2 className="text-xl font-bold mb-8">WK-Plan Dashboard</h2>
+    <div
+      className="flex h-screen"
+      style={{ backgroundColor: "var(--color-bg)" }}
+    >
+      <aside
+        className="w-64 p-6 flex flex-col sticky top-0"
+        style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
+      >
+        <h2 className="text-xl font-bold mb-8" style={{ color: "var(--color-accent)" }}>
+          WK-Plan Dashboard
+        </h2>
         <nav className="flex flex-col gap-4 flex-grow">
-          <Link to="/dashboard" className="hover:bg-gray-700 p-2 rounded">
+          <Link
+            to="/dashboard/exercises"
+            className={`p-3 rounded font-semibold transition ${
+              isActive("/dashboard/exercises")
+                ? "bg-[var(--color-accent)] text-white shadow-lg"
+                : "text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white"
+            }`}
+          >
             Exercises
           </Link>
-          <Link to="/dashboard/my-plans" className="hover:bg-gray-700 p-2 rounded">
+          <Link
+            to="/dashboard/my-plans"
+            className={`p-3 rounded font-semibold transition ${
+              isActive("/dashboard/my-plans")
+                ? "bg-[var(--color-accent)] text-white shadow-lg"
+                : "text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white"
+            }`}
+          >
             My Plans
           </Link>
-          <Link to="/dashboard/profile" className="hover:bg-gray-700 p-2 rounded">
+          <Link
+            to="/dashboard/profile"
+            className={`p-3 rounded font-semibold transition ${
+              isActive("/dashboard/profile")
+                ? "bg-[var(--color-accent)] text-white shadow-lg"
+                : "text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white"
+            }`}
+          >
             Profile
           </Link>
           <Link
             to="/dashboard/create-plan"
-            className="mt-auto bg-blue-600 hover:bg-blue-700 text-center p-3 rounded font-semibold cursor-pointer"
+            className="mt-auto p-3 rounded font-semibold text-center cursor-pointer bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-dark)] transition shadow-lg"
           >
             Create Plan
           </Link>
         </nav>
 
-        {/* Botão Logout */}
         <button
           onClick={handleLogout}
-          className="mt-6 bg-red-600 hover:bg-red-700 p-3 rounded font-semibold cursor-pointer"
+          className="mt-6 p-3 rounded font-semibold cursor-pointer bg-red-600 hover:bg-red-700 text-white transition"
         >
           Logout
         </button>
       </aside>
 
-      {/* Área principal */}
-      <main className="flex-grow bg-gray-100 p-8">
+      <main
+        className="flex-grow p-8 overflow-y-auto my-scrollbar"
+        style={{ backgroundColor: "var(--color-bg)" }}
+      >
         <Outlet />
       </main>
     </div>
