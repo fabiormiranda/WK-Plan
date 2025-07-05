@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import Loading from "../components/Loading";
 
 const API_URL = "https://wk-plan-backend.onrender.com/api/auth";
 
@@ -9,6 +10,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [loadingLocal, setLoadingLocal] = useState(false);
 
   const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
+    setLoadingLocal(true);
 
     try {
       const response = await axios.post(`${API_URL}/login`, { email, password });
@@ -33,8 +36,13 @@ function LoginPage() {
       } else {
         setError("Erro no login. Tenta novamente.");
       }
+      setLoadingLocal(false);
     }
   };
+
+  if (loadingLocal) {
+    return <Loading />;
+  }
 
   return (
     <div
@@ -82,9 +90,12 @@ function LoginPage() {
         />
         <button
           type="submit"
-          className="w-full py-3 rounded bg-[var(--color-accent)] text-white font-bold text-lg tracking-wide shadow hover:bg-[var(--color-accent-dark)] transition"
+          disabled={loadingLocal}
+          className={`w-full py-3 rounded text-white font-bold text-lg tracking-wide shadow transition ${
+            loadingLocal ? "bg-gray-500 cursor-not-allowed" : "bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)]"
+          }`}
         >
-          Login
+          {loadingLocal ? "Logging in..." : "Login"}
         </button>
         <div className="text-sm text-[var(--color-muted)] text-center mt-2">
           Don't have an account?{" "}
