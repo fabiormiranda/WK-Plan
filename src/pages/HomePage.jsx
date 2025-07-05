@@ -5,68 +5,39 @@ import logo from "../assets/wk-plan-logo.png";
 function HomePage() {
   return (
     <div
-      className="min-h-[80vh] flex flex-col justify-center items-center px-4"
-      style={{
-        background: "var(--color-bg)",
-        color: "var(--color-text)",
-      }}
+      className="min-h-[80vh] flex flex-col justify-center items-center px-4 bg-[var(--color-bg)] text-[var(--color-text)]"
     >
       <div
-        className="max-w-2xl w-full rounded-2xl shadow-xl p-10 flex flex-col items-center"
-        style={{
-          background: "var(--color-bg-card)",
-          color: "var(--color-text)",
-        }}
+        className="max-w-2xl w-full rounded-2xl shadow-xl p-8 sm:p-10 flex flex-col items-center bg-[var(--color-bg-card)] text-[var(--color-text)]"
       >
         <img
-  src={logo}
-  alt="WK-Plan icon"
-  className="w- h-10 mb-4 mx-auto"
-/>
+          src={logo}
+          alt="WK-Plan icon"
+          className="w-24 sm:w-28 mb-6 mx-auto"
+        />
         <h1
-          className="text-4xl font-extrabold mb-3 text-center"
-          style={{ color: "var(--color-accent)" }}
+          className="text-3xl sm:text-4xl font-extrabold mb-4 text-center text-[var(--color-accent)]"
         >
           Welcome to WK-Plan
         </h1>
-        <p className="text-lg text-center mb-6 text-[var(--color-muted)]">
+        <p className="text-base sm:text-lg text-center mb-8 text-[var(--color-muted)] max-w-xl">
           Organize your gym workouts, create custom training plans and reach your fitness goals with simplicity and motivation!
         </p>
-        <div className="flex gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 mb-10 w-full justify-center">
           <Link
             to="/signup"
-            className="px-8 py-3 rounded-xl font-bold text-lg shadow"
-            style={{
-              background: "var(--color-accent)",
-              color: "#fff",
-              transition: "background 0.2s",
-            }}
-            onMouseOver={e => (e.target.style.background = "var(--color-accent-dark)")}
-            onMouseOut={e => (e.target.style.background = "var(--color-accent)")}
+            className="px-10 py-3 rounded-xl font-bold text-lg shadow bg-[var(--color-accent)] text-white text-center transition-colors duration-200 hover:bg-[var(--color-accent-dark)]"
           >
             Get Started
           </Link>
           <Link
             to="/login"
-            className="px-8 py-3 rounded-xl font-bold text-lg border"
-            style={{
-              borderColor: "var(--color-accent)",
-              color: "var(--color-accent)",
-              background: "var(--color-bg-card)",
-            }}
-            onMouseOver={e => {
-              e.target.style.background = "var(--color-accent)";
-              e.target.style.color = "#fff";
-            }}
-            onMouseOut={e => {
-              e.target.style.background = "var(--color-bg-card)";
-              e.target.style.color = "var(--color-accent)";
-            }}
+            className="px-10 py-3 rounded-xl font-bold text-lg border border-[var(--color-accent)] text-[var(--color-accent)] bg-[var(--color-bg-card)] text-center transition-colors duration-200 hover:bg-[var(--color-accent)] hover:text-white"
           >
             Log In
           </Link>
         </div>
-        <div className="w-full flex flex-col sm:flex-row gap-4 justify-between">
+        <div className="w-full flex flex-col sm:flex-row gap-6 justify-between">
           <Feature icon="💪" title="Personalized Plans" desc="Build workout plans tailored for you" />
           <Feature icon="📅" title="Easy Scheduling" desc="Plan your sessions and track progress" />
           <Feature icon="📱" title="Access Anywhere" desc="Responsive design for mobile & desktop" />
@@ -79,19 +50,10 @@ function HomePage() {
 function Feature({ icon, title, desc }) {
   return (
     <div
-      className="flex flex-col items-center rounded-xl p-4 flex-1 shadow-sm"
-      style={{
-        background: "rgba(36, 36, 36, 0.88)",
-        color: "var(--color-text)",
-      }}
+      className="flex flex-col items-center rounded-xl p-6 flex-1 shadow-sm bg-[rgba(36,36,36,0.88)] text-[var(--color-text)]"
     >
-      <div className="text-3xl mb-2">{icon}</div>
-      <div
-        className="font-semibold mb-1"
-        style={{ color: "var(--color-accent)" }}
-      >
-        {title}
-      </div>
+      <div className="text-4xl mb-3">{icon}</div>
+      <div className="font-semibold mb-2 text-[var(--color-accent)] text-center">{title}</div>
       <div className="text-sm text-[var(--color-muted)] text-center">{desc}</div>
     </div>
   );

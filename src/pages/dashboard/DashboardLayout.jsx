@@ -15,15 +15,15 @@ function DashboardLayout() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div
-      className="flex h-screen"
-      style={{ backgroundColor: "var(--color-bg)" }}
-    >
+    <div className="flex bg-[var(--color-bg)] min-h-screen">
       <aside
-        className="w-64 p-6 flex flex-col sticky top-0"
-        style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
+        className="w-64 p-6 flex flex-col bg-[var(--color-bg-card)] text-[var(--color-text)]"
+        style={{ maxHeight: "fit-content" }}
       >
-        <h2 className="text-xl font-bold mb-8" style={{ color: "var(--color-accent)" }}>
+        <h2
+          className="text-xl font-bold mb-8 text-center"
+          style={{ color: "var(--color-accent)" }}
+        >
           WK-Plan Dashboard
         </h2>
         <nav className="flex flex-col gap-4 flex-grow">
@@ -57,9 +57,12 @@ function DashboardLayout() {
           >
             Profile
           </Link>
+
+          <div className="flex-grow" />
+
           <Link
             to="/dashboard/create-plan"
-            className="mt-auto p-3 rounded font-semibold text-center cursor-pointer bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-dark)] transition shadow-lg"
+            className="p-3 rounded font-semibold text-center cursor-pointer bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-dark)] transition shadow-lg"
           >
             Create Plan
           </Link>
@@ -67,14 +70,14 @@ function DashboardLayout() {
 
         <button
           onClick={handleLogout}
-          className="mt-6 p-3 rounded font-semibold cursor-pointer bg-red-600 hover:bg-red-700 text-white transition"
+          className="mt-7 p-3 rounded font-semibold cursor-pointer bg-red-600 hover:bg-red-700 text-white transition"
         >
           Logout
         </button>
       </aside>
 
       <main
-        className="flex-grow p-8 overflow-y-auto my-scrollbar"
+        className="flex-grow pt-8 px-8 pb-0 overflow-y-auto"
         style={{ backgroundColor: "var(--color-bg)" }}
       >
         <Outlet />

@@ -12,9 +12,7 @@ function MyPlans() {
     const token = localStorage.getItem("token");
     axios
       .get("http://localhost:5000/api/workout-plans", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
         setPlans(res.data);
@@ -27,7 +25,7 @@ function MyPlans() {
 
   if (loading)
     return (
-      <div className="p-6 text-center" style={{ color: "var(--color-text)" }}>
+      <div className="px-6 pt-6 text-center" style={{ color: "var(--color-text)" }}>
         Loading plans...
       </div>
     );
@@ -39,7 +37,7 @@ function MyPlans() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="px-6 pt-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold" style={{ color: "var(--color-accent)" }}>
           My Plans
@@ -108,8 +106,6 @@ function MyPlans() {
                     )}
                   </div>
                 </div>
-
-      
               </div>
             </li>
           ))}

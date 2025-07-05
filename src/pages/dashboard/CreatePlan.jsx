@@ -114,8 +114,7 @@ function CreatePlan() {
       }, 1800);
     } catch (err) {
       setLoadingSubmit(false);
-      const msg =
-        err.response?.data?.message || "Error creating plan!";
+      const msg = err.response?.data?.message || "Error creating plan!";
       alert(msg);
     }
   };
@@ -126,7 +125,7 @@ function CreatePlan() {
 
   return (
     <div
-      className="p-6 max-w-6xl mx-auto rounded-xl shadow-lg"
+      className="px-6 pt-6 max-w-6xl mx-auto rounded-xl shadow-lg"
       style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
     >
       {successMsg && (

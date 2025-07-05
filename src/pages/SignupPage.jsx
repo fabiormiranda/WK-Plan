@@ -27,24 +27,20 @@ function SignupPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center"
-      style={{
-        background: "var(--color-bg)",
-        color: "var(--color-text)",
-      }}
+      className="min-h-[80vh] flex flex-col justify-center items-center px-4 bg-[var(--color-bg)] text-[var(--color-text)]"
     >
       <form
         onSubmit={handleSubmit}
-        className="bg-[var(--color-bg-card)] rounded-2xl shadow-xl w-full max-w-sm p-8 flex flex-col gap-4"
+        className="max-w-md w-full rounded-2xl shadow-xl p-8 sm:p-10 flex flex-col gap-6 bg-[var(--color-bg-card)] text-[var(--color-text)]"
       >
-        <div className="flex flex-col items-center mb-2">
+        <div className="flex flex-col items-center mb-6">
           <img
             src="https://cdn-icons-png.flaticon.com/512/5956/5956416.png"
             alt="WK-Plan logo"
-            className="w-14 h-14 mb-2"
+            className="w-16 h-16 mb-3"
           />
           <h2
-            className="text-2xl font-extrabold mb-2 tracking-tight"
+            className="text-3xl font-extrabold tracking-tight"
             style={{ color: "var(--color-accent)" }}
           >
             Create Account
@@ -52,7 +48,7 @@ function SignupPage() {
         </div>
         {error && <p className="text-red-500 text-center">{error}</p>}
         <input
-          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition mb-2"
+          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition"
           placeholder="Name"
           type="text"
           autoComplete="name"
@@ -61,7 +57,7 @@ function SignupPage() {
           required
         />
         <input
-          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition mb-2"
+          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition"
           placeholder="Email"
           type="email"
           autoComplete="email"
@@ -70,7 +66,7 @@ function SignupPage() {
           required
         />
         <input
-          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition mb-2"
+          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition"
           placeholder="Password"
           type="password"
           autoComplete="new-password"
@@ -84,7 +80,7 @@ function SignupPage() {
         >
           Register
         </button>
-        <div className="text-sm text-[var(--color-muted)] text-center mt-2">
+        <div className="text-sm text-[var(--color-muted)] text-center">
           Already have an account?{" "}
           <Link
             to="/login"

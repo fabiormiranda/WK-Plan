@@ -9,7 +9,7 @@ function Profile() {
   if (!user) return null;
 
   return (
-    <div style={{ color: "var(--color-text)" }}>
+    <div className="px-6 pt-6" style={{ color: "var(--color-text)" }}>
       <h1 className="text-2xl font-bold mb-4" style={{ color: "var(--color-accent)" }}>
         Your Profile
       </h1>

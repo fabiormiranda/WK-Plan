@@ -24,15 +24,15 @@ function Navbar() {
       }}
     >
       <div className="flex items-center gap-3">
-  <Link to="/">
-    <img
-      src={logo}
-      alt="WK-Plan logo"
-      className="w-32 h-14 object-contain"
-      style={{ display: "block" }}
-    />
-  </Link>
-</div>
+        <Link to="/">
+          <img
+            src={logo}
+            alt="WK-Plan logo"
+            className="w-20 sm:w-28 md:w-32 h-auto object-contain"
+            style={{ display: "block", cursor: "pointer" }}
+          />
+        </Link>
+      </div>
 
       <div className="flex gap-4">
         {links.map((link) => (
@@ -55,14 +55,14 @@ function Navbar() {
                     transition: "background 0.2s, color 0.2s",
                   }
             }
-            onMouseOver={e => {
-              e.target.style.background = "var(--color-accent)";
-              e.target.style.color = "#fff";
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "var(--color-accent)";
+              e.currentTarget.style.color = "#fff";
             }}
-            onMouseOut={e => {
+            onMouseOut={(e) => {
               if (location.pathname !== link.to) {
-                e.target.style.background = "transparent";
-                e.target.style.color = "var(--color-accent)";
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "var(--color-accent)";
               }
             }}
           >

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -11,6 +11,7 @@ function Calendar({ events, onDateClick }) {
       events={events}
       dateClick={onDateClick}
       height="auto"
+      className="px-6 pt-6"
     />
   );
 }

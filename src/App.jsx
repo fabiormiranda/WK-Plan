@@ -28,7 +28,7 @@ function AppContent() {
   return (
     <>
       <Navbar />
-      <div className="p-8">
+      <div className="pt-8 px-8 pb-0">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
