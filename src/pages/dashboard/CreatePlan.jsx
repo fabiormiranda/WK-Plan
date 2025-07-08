@@ -47,9 +47,7 @@ function CreatePlan() {
     setSelectedExercises([]);
   }, [categoryFilter, exercises]);
 
-  const uniqueCategories = Array.from(
-    new Set(exercises.map((ex) => ex.category))
-  ).sort();
+  const uniqueCategories = Array.from(new Set(exercises.map((ex) => ex.category))).sort();
 
   const handleCheckboxChange = (exerciseId) => {
     setSelectedExercises((prev) =>
@@ -70,12 +68,10 @@ function CreatePlan() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!planName || !difficulty || selectedExercises.length === 0) {
       alert("Please enter all fields and select at least one exercise.");
       return;
     }
-
     if (selectedDates.length === 0) {
       alert("Please select at least one workout date.");
       return;
@@ -83,8 +79,8 @@ function CreatePlan() {
 
     try {
       setLoadingSubmit(true);
-
       const token = localStorage.getItem("token");
+
       await axios.post(
         "http://localhost:5000/api/workout-plans",
         {
@@ -95,11 +91,10 @@ function CreatePlan() {
           dates: selectedDates,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       setSuccessMsg("Plan created successfully!");
       setPlanName("");
       setDescription("");
@@ -125,8 +120,11 @@ function CreatePlan() {
 
   return (
     <div
-      className="px-6 pt-6 max-w-6xl mx-auto rounded-xl shadow-lg"
-      style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
+      className="mt-8 px-4 pt-8 pb-10 max-w-5xl mx-auto rounded-lg shadow-lg"
+      style={{
+        backgroundColor: "var(--color-bg-card)",
+        color: "var(--color-text)",
+      }}
     >
       {successMsg && (
         <div className="mb-4 text-green-500 font-semibold text-center">
@@ -134,50 +132,44 @@ function CreatePlan() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex gap-12">
-        {/* Left side: form + exercises */}
-        <div className="flex flex-col gap-4 flex-1 max-w-xl">
-          <h1 className="text-2xl font-bold mb-6" style={{ color: "var(--color-accent)" }}>
+      <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-8">
+        {/* Left: Form and Exercises */}
+        <div className="flex flex-col gap-4 flex-1">
+          <h1 className="text-2xl font-bold mb-4" style={{ color: "var(--color-accent)" }}>
             Create New Workout Plan
           </h1>
 
-          {/* Plan Name */}
-          <label className="block">
+          <label>
             <span className="font-semibold mb-1 block">Plan Name:</span>
             <input
               type="text"
               value={planName}
               onChange={(e) => setPlanName(e.target.value)}
-              className="block w-full p-3 rounded border border-transparent bg-[#18181b] focus:border-[var(--color-accent)] outline-none transition"
+              className="block w-full p-3 rounded bg-[#18181b] border border-transparent focus:border-[var(--color-accent)] outline-none transition"
               required
               disabled={loadingSubmit}
-              style={{ cursor: loadingSubmit ? "not-allowed" : "auto" }}
             />
           </label>
 
-          {/* Description */}
-          <label className="block">
+          <label>
             <span className="font-semibold mb-1 block">Description:</span>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="block w-full p-3 rounded border border-transparent bg-[#18181b] focus:border-[var(--color-accent)] outline-none transition"
+              className="block w-full p-3 rounded bg-[#18181b] border border-transparent focus:border-[var(--color-accent)] outline-none transition"
               disabled={loadingSubmit}
-              style={{ cursor: loadingSubmit ? "not-allowed" : "auto" }}
             />
           </label>
 
-          {/* Difficulty */}
-          <label className="block">
+          <label>
             <span className="font-semibold mb-1 block">Difficulty:</span>
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
-              className="block w-full p-3 rounded border border-transparent bg-[#18181b] focus:border-[var(--color-accent)] outline-none transition"
+              className="block w-full p-3 rounded bg-[#18181b] border border-transparent focus:border-[var(--color-accent)] outline-none transition"
               required
               disabled={loadingSubmit}
-              style={{ cursor: loadingSubmit ? "not-allowed" : "auto" }}
             >
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>
@@ -185,15 +177,13 @@ function CreatePlan() {
             </select>
           </label>
 
-          {/* Filter Exercises */}
-          <label className="block">
+          <label>
             <span className="font-semibold mb-1 block">Filter Exercises by Category:</span>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="block w-full p-3 rounded border border-transparent bg-[#18181b] focus:border-[var(--color-accent)] outline-none transition"
+              className="block w-full p-3 rounded bg-[#18181b] border border-transparent focus:border-[var(--color-accent)] outline-none transition"
               disabled={loadingSubmit}
-              style={{ cursor: loadingSubmit ? "not-allowed" : "auto" }}
             >
               <option value="">All</option>
               {uniqueCategories.map((cat) => (
@@ -204,26 +194,18 @@ function CreatePlan() {
             </select>
           </label>
 
-          {/* Select Exercises */}
-          <div
-            className="mb-4 max-h-72 overflow-y-auto rounded border border-gray-700 bg-[var(--color-bg)] p-2"
-            style={{ opacity: loadingSubmit ? 0.6 : 1 }}
-          >
+          <div className="max-h-72 overflow-y-auto rounded border border-gray-700 bg-[var(--color-bg)] p-2">
             {filteredExercises.length === 0 && (
-              <p className="text-[var(--color-muted)] text-center">No exercises found.</p>
+              <p className="text-center text-[var(--color-muted)]">No exercises found.</p>
             )}
             {filteredExercises.map((ex) => (
               <label
                 key={ex._id}
-                className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition"
-                style={{
-                  backgroundColor: selectedExercises.includes(ex._id)
-                    ? "var(--color-accent)"
-                    : "var(--color-bg-card)",
-                  color: selectedExercises.includes(ex._id)
-                    ? "white"
-                    : "var(--color-text)",
-                }}
+                className={`flex items-center gap-2 p-2 rounded cursor-pointer transition ${
+                  selectedExercises.includes(ex._id)
+                    ? "bg-[var(--color-accent)] text-white"
+                    : "bg-[var(--color-bg-card)] text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white"
+                }`}
               >
                 <input
                   type="checkbox"
@@ -233,18 +215,21 @@ function CreatePlan() {
                   disabled={loadingSubmit}
                 />
                 <span>
-                  {ex.name} <span className="text-[var(--color-muted)] text-xs">({ex.category})</span>
+                  {ex.name}{" "}
+                  <span className="text-[var(--color-muted)] text-xs">
+                    ({ex.category})
+                  </span>
                 </span>
               </label>
             ))}
           </div>
         </div>
 
-        {/* Right side: calendar */}
-        <div className="flex flex-col w-120">
-          <div className="mb-17 pl-30" style={{ color: "var(--color-accent)" }}>
-            <h2 className="text-2xl font-bold">Select Workout Dates</h2>
-          </div>
+        {/* Right: Calendar */}
+        <div className="flex flex-col w-full lg:w-[45%]">
+          <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--color-accent)" }}>
+            Select Workout Dates
+          </h2>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
@@ -264,25 +249,19 @@ function CreatePlan() {
               }
               return "";
             }}
-            height={400}
+            height={420}
             themeSystem="standard"
             locale="en"
           />
           <button
             type="submit"
-            className="mt-6 py-3 rounded font-semibold shadow"
+            className="mt-6 py-3 rounded font-semibold shadow hover:opacity-90 transition"
             style={{
               backgroundColor: "var(--color-accent)",
               color: "white",
               cursor: loadingSubmit ? "not-allowed" : "pointer",
             }}
             disabled={loadingSubmit}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-accent-dark)")
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-accent)")
-            }
           >
             Create Plan
           </button>

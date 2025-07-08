@@ -11,6 +11,8 @@ function MyPlanDetail() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
+  const [selectedExercise, setSelectedExercise] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,21 +28,19 @@ function MyPlanDetail() {
         setDifficulty(res.data.difficulty || "easy");
         setSelectedExercises(res.data.exercises.map((ex) => ex._id));
       });
+
     axios.get("http://localhost:5000/api/exercises").then((res) => setAllExercises(res.data));
   }, [planId]);
 
   const handleCheckboxChange = (exerciseId) => {
     setSelectedExercises((prev) =>
-      prev.includes(exerciseId)
-        ? prev.filter((id) => id !== exerciseId)
-        : [...prev, exerciseId]
+      prev.includes(exerciseId) ? prev.filter((id) => id !== exerciseId) : [...prev, exerciseId]
     );
   };
 
   const formatDate = (dateStr) => {
     const options = { weekday: "short", month: "short", day: "numeric" };
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", options);
+    return new Date(dateStr).toLocaleDateString("en-US", options);
   };
 
   const handleUpdate = async (e) => {
@@ -48,15 +48,8 @@ function MyPlanDetail() {
     const token = localStorage.getItem("token");
     await axios.put(
       `http://localhost:5000/api/workout-plans/${planId}`,
-      {
-        title,
-        description,
-        difficulty,
-        exercises: selectedExercises,
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      { title, description, difficulty, exercises: selectedExercises },
+      { headers: { Authorization: `Bearer ${token}` } }
     );
     alert("Plan updated!");
     setEditMode(false);
@@ -76,89 +69,99 @@ function MyPlanDetail() {
     navigate("/dashboard/my-plans");
   };
 
+  const categories = Array.from(new Set(allExercises.map((ex) => ex.category))).sort();
+
+  const filteredExercises = categoryFilter
+    ? allExercises.filter((ex) => ex.category.toLowerCase() === categoryFilter.toLowerCase())
+    : allExercises;
+
   if (!plan)
     return (
-      <div className="p-6" style={{ color: "var(--color-text)" }}>
+      <div className="p-6 pt-20 text-center text-base" style={{ color: "var(--color-text)" }}>
         Loading plan...
       </div>
     );
 
   return (
     <div
-      className="max-w-3xl mx-auto p-8 rounded-lg shadow-lg"
+      className="max-w-4xl mx-auto mt-8 px-6 pt-12 pb-12 rounded-lg shadow-lg"
       style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
     >
-      <h1
-        className="text-3xl font-extrabold mb-6"
-        style={{ color: "var(--color-accent)" }}
-      >
+      <h1 className="text-2xl sm:text-3xl font-extrabold mb-8 text-[var(--color-accent)]">
         Workout Plan Details
       </h1>
 
       {!editMode ? (
         <>
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold" style={{ color: "var(--color-accent)" }}>
-              {plan.title}
-            </h2>
-            <p className="mt-1 text-lg" style={{ color: "var(--color-text)" }}>
-              {plan.description || <em>No description provided.</em>}
+          {/* Plan Info */}
+          <section className="mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1 text-[var(--color-accent)]">{plan.title}</h2>
+            <p className="text-base mb-1 text-[var(--color-muted)] italic">
+              {plan.description || "No description provided."}
             </p>
-            <p className="mt-2 text-sm" style={{ color: "var(--color-muted)" }}>
-              Difficulty:{" "}
-              <span
-                className={`font-semibold text-${plan.difficulty === 'easy' ? 'green' : plan.difficulty === 'medium' ? 'yellow' : 'red'}-500`}
-                style={{ color: "var(--color-accent)" }}
-              >
-                {plan.difficulty}
-              </span>
+            <p className="text-sm">
+              Difficulty: <span style={{ color: "var(--color-accent)" }}>{plan.difficulty}</span>
             </p>
           </section>
 
+          {/* Exercises */}
           <section className="mb-8">
-            <h3 className="text-xl font-semibold mb-3" style={{ color: "var(--color-accent)" }}>
-              Exercises
-            </h3>
-            <ul className="list-disc list-inside max-h-48 overflow-y-auto">
-              {plan.exercises.map((ex) => (
-                <li key={ex._id} className="mb-1" style={{ color: "var(--color-text)" }}>
-                  <strong>{ex.name}</strong>{" "}
-                  <span className="text-sm text-[var(--color-muted)]">({ex.category})</span>
-                </li>
-              ))}
-            </ul>
+            <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">Exercises</h3>
+            {plan.exercises.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {plan.exercises.map((ex) => (
+                  <div
+                    key={ex._id}
+                    onClick={() => setSelectedExercise(ex)}
+                    className="flex items-center gap-3 bg-[var(--color-bg)] rounded-lg p-3 shadow hover:shadow-md hover:scale-[1.01] transition cursor-pointer"
+                  >
+                    <img
+                      src={ex.mediaUrl || "/assets/placeholder.png"}
+                      alt={ex.name}
+                      onError={(e) => (e.target.src = "/assets/placeholder.png")}
+                      className="w-20 h-20 object-cover rounded-md"
+                    />
+                    <div className="flex flex-col justify-center">
+                      <p className="text-base font-medium text-[var(--color-text)]">{ex.name}</p>
+                      <p className="text-sm text-[var(--color-muted)]">{ex.category}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="italic text-[var(--color-muted)]">No exercises added to this plan.</p>
+            )}
           </section>
 
+          {/* Workout Dates */}
           <section className="mb-8">
-            <h3 className="text-xl font-semibold mb-3" style={{ color: "var(--color-accent)" }}>
-              Workout Date
-            </h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">Workout Dates</h3>
             {plan.dates && plan.dates.length > 0 ? (
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 {plan.dates.map((date) => (
                   <span
                     key={date}
-                    className="px-4 py-1 rounded-full text-sm font-semibold bg-[var(--color-accent)] text-white shadow"
-                    title={new Date(date).toLocaleString()}
+                    className="px-3 py-1 rounded-full text-xs font-semibold bg-[var(--color-accent)] text-white shadow transition transform hover:scale-105"
                   >
                     {formatDate(date)}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-[var(--color-muted)] italic">No workout dates set</p>
+              <p className="italic text-[var(--color-muted)]">No workout dates set.</p>
             )}
           </section>
 
+          {/* Buttons */}
           <div className="flex gap-4">
             <button
-              className="px-6 py-2 rounded bg-[var(--color-accent)] text-white font-semibold hover:bg-[var(--color-accent-dark)] transition"
+              className="px-5 py-2 rounded bg-[var(--color-accent)] text-white font-semibold hover:bg-[var(--color-accent-dark)] transition text-sm"
               onClick={() => setEditMode(true)}
             >
               Edit
             </button>
             <button
-              className="px-6 py-2 rounded bg-red-700 text-white font-semibold hover:bg-red-800 transition"
+              className="px-5 py-2 rounded bg-red-700 text-white font-semibold hover:bg-red-800 transition text-sm"
               onClick={handleDelete}
             >
               Delete
@@ -166,30 +169,31 @@ function MyPlanDetail() {
           </div>
         </>
       ) : (
-        <form onSubmit={handleUpdate}>
-          <label className="block mb-4" style={{ color: "var(--color-text)" }}>
-            Title:
+        /* Edit Mode Form */
+        <form onSubmit={handleUpdate} className="space-y-4">
+          <div>
+            <label className="block font-semibold mb-1 text-sm">Title:</label>
             <input
-              className="block w-full p-3 rounded border border-gray-700 bg-[var(--color-bg)] text-[var(--color-text)]"
+              className="block w-full p-2 rounded border border-gray-700 bg-[var(--color-bg)] text-sm"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
-          </label>
+          </div>
 
-          <label className="block mb-4" style={{ color: "var(--color-text)" }}>
-            Description:
+          <div>
+            <label className="block font-semibold mb-1 text-sm">Description:</label>
             <input
-              className="block w-full p-3 rounded border border-gray-700 bg-[var(--color-bg)] text-[var(--color-text)]"
+              className="block w-full p-2 rounded border border-gray-700 bg-[var(--color-bg)] text-sm"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-          </label>
+          </div>
 
-          <label className="block mb-4" style={{ color: "var(--color-text)" }}>
-            Difficulty:
+          <div>
+            <label className="block font-semibold mb-1 text-sm">Difficulty:</label>
             <select
-              className="block w-full p-3 rounded border border-gray-700 bg-[var(--color-bg)] text-[var(--color-text)]"
+              className="block w-full p-2 rounded border border-gray-700 bg-[var(--color-bg)] text-sm"
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
               required
@@ -198,19 +202,30 @@ function MyPlanDetail() {
               <option value="medium">Medium</option>
               <option value="hard">Hard</option>
             </select>
-          </label>
+          </div>
 
-          <div className="mb-6">
-            <span className="font-semibold text-[var(--color-accent)]">
-              Select Exercises:
-            </span>
-            <div
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 max-h-56 overflow-y-auto rounded border border-gray-700 p-4 bg-[var(--color-bg-card)]"
+          {/* Filter Bar */}
+          <div>
+            <label className="block font-semibold mb-1 text-sm">Filter Exercises by Category:</label>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="block w-full p-2 rounded border border-gray-700 bg-[var(--color-bg)] text-sm"
             >
-              {allExercises.map((ex) => (
+              <option value="">All</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <span className="font-semibold text-[var(--color-accent)] text-sm">Select Exercises:</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 max-h-56 overflow-y-auto rounded border border-gray-700 p-2 bg-[var(--color-bg-card)]">
+              {filteredExercises.map((ex) => (
                 <label
                   key={ex._id}
-                  className="flex items-center gap-3 p-2 rounded bg-[var(--color-bg)] cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition"
+                  className="flex items-center gap-2 p-2 rounded bg-[var(--color-bg)] cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition text-sm"
                 >
                   <input
                     type="checkbox"
@@ -220,31 +235,59 @@ function MyPlanDetail() {
                   />
                   <span>
                     {ex.name}{" "}
-                    <span className="text-sm text-[var(--color-muted)]">
-                      ({ex.category})
-                    </span>
+                    <span className="text-xs text-[var(--color-muted)]">({ex.category})</span>
                   </span>
                 </label>
               ))}
             </div>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 mt-4">
             <button
               type="submit"
-              className="px-6 py-2 rounded bg-[var(--color-accent)] text-white font-semibold hover:bg-[var(--color-accent-dark)] transition"
+              className="px-5 py-2 rounded bg-[var(--color-accent)] text-white font-semibold hover:bg-[var(--color-accent-dark)] transition text-sm"
             >
               Save
             </button>
             <button
               type="button"
-              className="px-6 py-2 rounded bg-[var(--color-bg-card)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-bg)] transition"
+              className="px-5 py-2 rounded bg-[var(--color-bg-card)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-bg)] transition text-sm"
               onClick={() => setEditMode(false)}
             >
               Cancel
             </button>
           </div>
         </form>
+      )}
+
+      {/* Modal for GIF preview */}
+      {selectedExercise && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+          onClick={() => setSelectedExercise(null)}
+        >
+          <div
+            className="bg-[var(--color-bg-card)] p-4 rounded-lg max-w-md w-full text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-lg font-bold mb-1 text-[var(--color-accent)]">{selectedExercise.name}</h2>
+            <p className="text-xs text-[var(--color-muted)] mb-3">{selectedExercise.category}</p>
+            <video
+              src={`/assets/gifs/${selectedExercise.name.replace(/\s+/g, "-")}.mov`}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full rounded mb-3"
+            />
+            <button
+              onClick={() => setSelectedExercise(null)}
+              className="px-4 py-2 rounded bg-[var(--color-accent)] text-white font-semibold hover:bg-[var(--color-accent-dark)] transition text-sm"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

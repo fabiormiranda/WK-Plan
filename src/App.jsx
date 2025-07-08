@@ -8,10 +8,11 @@ import { AuthProvider, AuthContext } from "./context/AuthContext";
 
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import DashboardHome from "./pages/dashboard/DashboardHome";
-import Exercises from "./pages/dashboard/Exercises"; 
+import Exercises from "./pages/dashboard/Exercises";
 import MyPlans from "./pages/dashboard/MyPlans";
 import Profile from "./pages/dashboard/Profile";
 import CreatePlan from "./pages/dashboard/CreatePlan";
+import ExerciseDetailPage from "./pages/dashboard/ExerciseDetailPage.jsx";
 import MyPlanDetail from "./pages/dashboard/MyPlanDetail";
 import ChangePassword from "./pages/dashboard/ChangePassword.jsx";
 
@@ -28,7 +29,7 @@ function AppContent() {
   return (
     <>
       <Navbar />
-      <div className="pt-8 px-8 pb-0">
+      <div>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -46,6 +47,7 @@ function AppContent() {
             <Route index element={<DashboardHome />} />
             <Route path="create-plan" element={<CreatePlan />} />
             <Route path="exercises" element={<Exercises />} />
+            <Route path="exercises/:exerciseSlug" element={<ExerciseDetailPage />} />
             <Route path="my-plans" element={<MyPlans />} />
             <Route path="my-plans/:planId" element={<MyPlanDetail />} />
             <Route path="profile" element={<Profile />} />

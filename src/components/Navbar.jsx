@@ -28,7 +28,7 @@ function Navbar() {
           <img
             src={logo}
             alt="WK-Plan logo"
-            className="w-20 sm:w-28 md:w-32 h-auto object-contain"
+            className="w-12 md:w-14 h-auto object-contain"
             style={{ display: "block", cursor: "pointer" }}
           />
         </Link>

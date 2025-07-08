@@ -15,54 +15,41 @@ function DashboardLayout() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="flex bg-[var(--color-bg)] min-h-screen">
+    <div className="bg-[var(--color-bg)] min-h-screen">
       <aside
-        className="w-64 p-6 flex flex-col bg-[var(--color-bg-card)] text-[var(--color-text)]"
-        style={{ maxHeight: "fit-content" }}
+        className="fixed top-0 left-0 h-screen w-60 p-4 flex flex-col bg-[var(--color-bg-card)] text-[var(--color-text)] border-r border-[var(--color-accent)] overflow-y-auto"
       >
         <h2
-          className="text-xl font-bold mb-8 text-center"
+          className="text-xl font-bold mb-6 pl-2"
           style={{ color: "var(--color-accent)" }}
         >
-          WK-Plan Dashboard
+          WK-Plan
         </h2>
-        <nav className="flex flex-col gap-4 flex-grow">
-          <Link
-            to="/dashboard/exercises"
-            className={`p-3 rounded font-semibold transition ${
-              isActive("/dashboard/exercises")
-                ? "bg-[var(--color-accent)] text-white shadow-lg"
-                : "text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white"
-            }`}
-          >
-            Exercises
-          </Link>
-          <Link
-            to="/dashboard/my-plans"
-            className={`p-3 rounded font-semibold transition ${
-              isActive("/dashboard/my-plans")
-                ? "bg-[var(--color-accent)] text-white shadow-lg"
-                : "text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white"
-            }`}
-          >
-            My Plans
-          </Link>
-          <Link
-            to="/dashboard/profile"
-            className={`p-3 rounded font-semibold transition ${
-              isActive("/dashboard/profile")
-                ? "bg-[var(--color-accent)] text-white shadow-lg"
-                : "text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white"
-            }`}
-          >
-            Profile
-          </Link>
+
+        <nav className="flex flex-col gap-2 flex-grow">
+          {[
+            { to: "/dashboard/exercises", label: "📋 Exercises" },
+            { to: "/dashboard/my-plans", label: "🗓️ My Plans" },
+            { to: "/dashboard/profile", label: "👤 Profile" },
+          ].map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`p-3 rounded-md font-medium transition flex items-center gap-2 pl-3 ${
+                isActive(item.to)
+                  ? "bg-[var(--color-accent)] text-white shadow-inner border-l-4 border-[var(--color-accent)]"
+                  : "hover:bg-[var(--color-accent)] hover:text-white"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
 
           <div className="flex-grow" />
 
           <Link
             to="/dashboard/create-plan"
-            className="p-3 rounded font-semibold text-center cursor-pointer bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-dark)] transition shadow-lg"
+            className="p-3 rounded-md font-semibold text-center bg-[var(--color-accent)] text-white hover:opacity-90 transition shadow-md"
           >
             Create Plan
           </Link>
@@ -70,14 +57,14 @@ function DashboardLayout() {
 
         <button
           onClick={handleLogout}
-          className="mt-7 p-3 rounded font-semibold cursor-pointer bg-red-600 hover:bg-red-700 text-white transition"
+          className="mt-4 p-3 rounded-md font-semibold text-center bg-red-600 hover:bg-red-700 text-white transition shadow-md"
         >
           Logout
         </button>
       </aside>
 
       <main
-        className="flex-grow pt-8 px-8 pb-0 overflow-y-auto"
+        className="ml-60 flex-grow px-8 pb-0 overflow-y-auto"
         style={{ backgroundColor: "var(--color-bg)" }}
       >
         <Outlet />

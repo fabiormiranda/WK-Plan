@@ -4,6 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import Loading from "../components/Loading";
 
+
 const API_URL = "https://wk-plan-backend.onrender.com/api/auth";
 
 function LoginPage() {
@@ -34,7 +35,7 @@ function LoginPage() {
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
-        setError("Erro no login. Tenta novamente.");
+        setError("Login failed. Please try again.");
       }
       setLoadingLocal(false);
     }
@@ -53,13 +54,9 @@ function LoginPage() {
         className="max-w-md w-full rounded-2xl shadow-xl p-8 sm:p-10 flex flex-col gap-6 bg-[var(--color-bg-card)] text-[var(--color-text)]"
       >
         <div className="flex flex-col items-center mb-6">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/5956/5956416.png"
-            alt="WK-Plan logo"
-            className="w-16 h-16 mb-3"
-          />
+        
           <h2
-            className="text-3xl font-extrabold tracking-tight"
+            className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center"
             style={{ color: "var(--color-accent)" }}
           >
             Login to WK-Plan

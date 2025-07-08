@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function Exercises() {
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState(""); // categoria selecionada
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -36,86 +37,89 @@ function Exercises() {
   }
 
   return (
-    <div
-      className="min-h-[80vh] max-h-[80vh] overflow-y-auto my-scrollbar px-4 py-6 max-w-6xl mx-auto"
-      style={{ backgroundColor: "var(--color-bg)", color: "var(--color-text)" }}
-    >
-      <h1
-        className="text-3xl font-bold mb-8 text-center"
-        style={{ color: "var(--color-accent)" }}
+    <div className="max-w-7xl mx-auto px-4 pb-4 pt-10">
+      <div
+        className="min-h-[80vh] max-h-[80vh] overflow-y-auto overflow-x-hidden my-scrollbar px-4 sm:px-6"
+        style={{
+          backgroundColor: "var(--color-bg)",
+          color: "var(--color-text)",
+        }}
       >
-        Exercises
-      </h1>
+        <h1
+          className="text-4xl font-extrabold mb-6 text-left"
+          style={{ color: "var(--color-accent)" }}
+        >
+          Exercises
+        </h1>
 
-      <div className="mb-8 flex justify-center">
-        <label
-          htmlFor="filter"
-          className="mr-3 font-semibold"
-          style={{ color: "var(--color-text)" }}
-        >
-          Filter by category:
-        </label>
-        <select
-          id="filter"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="p-2 rounded border"
-          style={{
-            backgroundColor: "var(--color-bg-card)",
-            color: "var(--color-text)",
-            borderColor: "var(--color-accent)",
-          }}
-        >
-          <option
-            value=""
-            style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
+        <div className="mb-6 mt-4 flex flex-wrap items-center gap-2">
+          <label
+            htmlFor="filter"
+            className="font-medium text-left"
+            style={{ color: "var(--color-text)" }}
           >
-            All
-          </option>
-          {categories.map((cat) => (
+            Filter by Category:
+          </label>
+          <select
+            id="filter"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="p-2 rounded-lg border text-sm"
+            style={{
+              backgroundColor: "var(--color-bg-card)",
+              color: "var(--color-text)",
+              borderColor: "var(--color-accent)",
+            }}
+          >
             <option
-              key={cat}
-              value={cat}
-              style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
-            >
-              {cat}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filteredExercises.map((ex) => (
-          <div
-            key={ex._id}
-            className="rounded-xl shadow-md p-6 flex flex-col items-center"
-            style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
-          >
-            <img
-              src={ex.mediaUrl}
-              alt={ex.name}
-              className="w-full h-40 object-cover rounded-lg mb-4"
-              onError={(e) => {
-                e.target.src = "https://via.placeholder.com/150?text=Exercise";
+              value=""
+              style={{
+                backgroundColor: "var(--color-bg-card)",
+                color: "var(--color-text)",
               }}
-            />
-            <h2 className="text-xl font-semibold mb-2" style={{ color: "var(--color-accent)" }}>
-              {ex.name}
-            </h2>
-            <p className="font-medium mb-2" style={{ color: "var(--color-accent)" }}>
-              {ex.category}
-            </p>
-            <p className="text-sm text-center mb-2" style={{ color: "var(--color-text)" }}>
-              {ex.description}
-            </p>
-            {ex.duration && (
-              <p className="text-xs mt-auto" style={{ color: "var(--color-muted)" }}>
-                Duration: {ex.duration}
-                {typeof ex.duration === "number" && ex.category === "Cardio" ? " min" : " sec"}
+            >
+              All
+            </option>
+            {categories.map((cat) => (
+              <option
+                key={cat}
+                value={cat}
+                style={{
+                  backgroundColor: "var(--color-bg-card)",
+                  color: "var(--color-text)",
+                }}
+              >
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredExercises.map((ex) => (
+            <Link
+              key={ex._id}
+              to={`/dashboard/exercises/${ex.name.toLowerCase().replace(/\s+/g, "-")}`}
+              className="rounded-xl shadow-md p-4 flex flex-col items-center cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg"
+              style={{ backgroundColor: "#181818", color: "var(--color-text)" }}
+            >
+              <img
+                src={ex.mediaUrl}
+                alt={ex.name}
+                className="w-full h-48 object-cover rounded-xl mb-3 transition-opacity"
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/150?text=Exercise";
+                }}
+              />
+              <h2 className="text-lg font-semibold mb-1 text-white text-center">
+                {ex.name}
+              </h2>
+              <p className="text-sm text-[var(--color-accent)] text-center">
+                {ex.category}
               </p>
-            )}
-          </div>
-        ))}
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

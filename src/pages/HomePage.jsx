@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/wk-plan-logo.png";
+
 
 function HomePage() {
   return (
@@ -10,11 +10,7 @@ function HomePage() {
       <div
         className="max-w-2xl w-full rounded-2xl shadow-xl p-8 sm:p-10 flex flex-col items-center bg-[var(--color-bg-card)] text-[var(--color-text)]"
       >
-        <img
-          src={logo}
-          alt="WK-Plan icon"
-          className="w-24 sm:w-28 mb-6 mx-auto"
-        />
+      
         <h1
           className="text-3xl sm:text-4xl font-extrabold mb-4 text-center text-[var(--color-accent)]"
         >
@@ -39,7 +35,7 @@ function HomePage() {
         </div>
         <div className="w-full flex flex-col sm:flex-row gap-6 justify-between">
           <Feature icon="💪" title="Personalized Plans" desc="Build workout plans tailored for you" />
-          <Feature icon="📅" title="Easy Scheduling" desc="Plan your sessions and track progress" />
+          <Feature icon="📅" title="Easy Scheduling" desc="Plan your sessions " />
           <Feature icon="📱" title="Access Anywhere" desc="Responsive design for mobile & desktop" />
         </div>
       </div>

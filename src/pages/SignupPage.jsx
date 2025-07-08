@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 const API_URL = "https://wk-plan-backend.onrender.com/api/auth";
 
@@ -17,10 +18,20 @@ function SignupPage() {
 
     try {
       await axios.post(`${API_URL}/signup`, { name, email, password });
-      alert("Conta criada com sucesso! Agora faz login.");
-      navigate("/login");
+      toast.success("Account created successfully! 🎉 Redirecting to login...", {
+        style: {
+          background: "var(--color-bg-card)",
+          color: "var(--color-text)",
+          border: "1px solid var(--color-accent)",
+        },
+        iconTheme: {
+          primary: "var(--color-accent)",
+          secondary: "var(--color-bg)",
+        },
+      });
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      const message = err.response?.data?.message || "Erro no registo";
+      const message = err.response?.data?.message || "Signup failed. Please try again.";
       setError(message);
     }
   };
@@ -29,21 +40,17 @@ function SignupPage() {
     <div
       className="min-h-[80vh] flex flex-col justify-center items-center px-4 bg-[var(--color-bg)] text-[var(--color-text)]"
     >
+      <Toaster position="top-center" />
       <form
         onSubmit={handleSubmit}
         className="max-w-md w-full rounded-2xl shadow-xl p-8 sm:p-10 flex flex-col gap-6 bg-[var(--color-bg-card)] text-[var(--color-text)]"
       >
         <div className="flex flex-col items-center mb-6">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/5956/5956416.png"
-            alt="WK-Plan logo"
-            className="w-16 h-16 mb-3"
-          />
           <h2
-            className="text-3xl font-extrabold tracking-tight"
+            className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center"
             style={{ color: "var(--color-accent)" }}
           >
-            Create Account
+            Create Your WK-Plan Account
           </h2>
         </div>
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -86,7 +93,7 @@ function SignupPage() {
             to="/login"
             className="text-[var(--color-accent)] hover:underline font-semibold"
           >
-            Login
+            Log in
           </Link>
         </div>
       </form>
