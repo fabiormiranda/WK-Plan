@@ -1,99 +1,88 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import Loading from "../../components/Loading";
 
 function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    setMessage("");
-    setError("");
 
     if (newPassword !== confirmNewPassword) {
-      setError("New passwords do not match");
+      toast.error("New passwords do not match");
       return;
     }
 
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.put(
-        "http://localhost:5000/api/auth/change-password",
-        { currentPassword, newPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setMessage(res.data.message);
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-      // Opcional: depois de mudar, voltar ao perfil
-      setTimeout(() => {
+    setLoading(true);
+    setTimeout(async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.put(
+          "http://localhost:5000/api/auth/change-password",
+          { currentPassword, newPassword },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        toast.success(res.data.message || "Password changed successfully!");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
         navigate("/dashboard/profile");
-      }, 2000);
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to change password");
-    }
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to change password");
+      } finally {
+        setLoading(false);
+      }
+    }, 2000);
   };
 
   return (
-    <div style={{ color: "var(--color-text)" }} className="max-w-sm mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4" style={{ color: "var(--color-accent)" }}>
+    <div className="max-w-sm mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4 text-[var(--color-accent)]">
         Change Password
       </h1>
-      <form onSubmit={handleChangePassword}>
-        <input
-          type="password"
-          placeholder="Current Password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          required
-          className="w-full mb-2 p-2 rounded border"
-          style={{
-            backgroundColor: "var(--color-bg-card)",
-            color: "var(--color-text)",
-            borderColor: "var(--color-accent)",
-          }}
-        />
-        <input
-          type="password"
-          placeholder="New Password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-          className="w-full mb-2 p-2 rounded border"
-          style={{
-            backgroundColor: "var(--color-bg-card)",
-            color: "var(--color-text)",
-            borderColor: "var(--color-accent)",
-          }}
-        />
-        <input
-          type="password"
-          placeholder="Confirm New Password"
-          value={confirmNewPassword}
-          onChange={(e) => setConfirmNewPassword(e.target.value)}
-          required
-          className="w-full mb-2 p-2 rounded border"
-          style={{
-            backgroundColor: "var(--color-bg-card)",
-            color: "var(--color-text)",
-            borderColor: "var(--color-accent)",
-          }}
-        />
-        {message && <p className="text-green-500 mb-2">{message}</p>}
-        {error && <p className="text-red-500 mb-2">{error}</p>}
-        <button
-          type="submit"
-          className="bg-[var(--color-accent)] text-white px-4 py-2 rounded hover:bg-[var(--color-accent-dark)]"
-        >
-          Change Password
-        </button>
-      </form>
+
+      {loading ? (
+        <Loading />
+      ) : (
+        <form onSubmit={handleChangePassword} className="space-y-3">
+          <input
+            type="password"
+            placeholder="Current Password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            required
+            className="w-full p-2 rounded border border-[var(--color-accent)] bg-[var(--color-bg-card)] text-[var(--color-text)] placeholder-gray-400"
+          />
+          <input
+            type="password"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+            className="w-full p-2 rounded border border-[var(--color-accent)] bg-[var(--color-bg-card)] text-[var(--color-text)] placeholder-gray-400"
+          />
+          <input
+            type="password"
+            placeholder="Confirm New Password"
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+            required
+            className="w-full p-2 rounded border border-[var(--color-accent)] bg-[var(--color-bg-card)] text-[var(--color-text)] placeholder-gray-400"
+          />
+          <button
+            type="submit"
+            className="w-full bg-[var(--color-accent)] text-white py-2 rounded hover:opacity-90 transition"
+          >
+            Change Password
+          </button>
+        </form>
+      )}
     </div>
   );
 }
