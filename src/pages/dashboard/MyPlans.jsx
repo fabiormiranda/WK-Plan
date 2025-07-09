@@ -26,64 +26,54 @@ function MyPlans() {
 
   const formatDate = (dateStr) => {
     const options = { weekday: "short", month: "short", day: "numeric" };
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", options);
+    return new Date(dateStr).toLocaleDateString("en-US", options);
   };
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-
     const reorderedPlans = Array.from(plans);
     const [movedPlan] = reorderedPlans.splice(result.source.index, 1);
     reorderedPlans.splice(result.destination.index, 0, movedPlan);
-
     setPlans(reorderedPlans);
   };
 
-  if (loading)
-    return (
-      <div className="px-6 pt-20 text-center text-lg" style={{ color: "var(--color-text)" }}>
-        Loading plans...
-      </div>
-    );
-
   return (
-    <div className="px-6 pt-14 pb-8 max-w-5xl mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-        <h1 className="text-3xl font-bold" style={{ color: "var(--color-accent)" }}>
-          My Plans
-        </h1>
-        <button
-          className="flex items-center gap-2 px-5 py-2 bg-[var(--color-accent)] text-white rounded font-semibold hover:bg-[var(--color-accent-dark)] transition shadow-md"
-          onClick={() => navigate("/dashboard/create-plan")}
-        >
-          <FaPlusCircle /> Create New Plan
-        </button>
-      </div>
+    <div className="px-6 pt-14 pb-8 max-w-6xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-1 sm:gap-50">
+  <h1 className="text-3xl font-bold" style={{ color: "var(--color-accent)" }}>
+    My Plans
+  </h1>
+  <button
+    className="flex items-center gap-2 px-5 py-2 rounded font-semibold border border-[var(--color-accent)] text-[var(--color-accent)] bg-white hover:bg-[var(--color-accent)] hover:text-white transition shadow sm:ml-6"
+    onClick={() => navigate("/dashboard/create-plan")}
+  >
+    <FaPlusCircle /> Create New Plan
+  </button>
+</div>
 
       {plans.length === 0 ? (
-        <div className="text-center text-[var(--color-muted)] italic mt-20">
+        <div className="flex flex-col items-center justify-center pt-24 text-center text-[var(--color-muted)] italic">
           <FaDumbbell size={48} className="mx-auto mb-4" />
           You have no workout plans yet.
         </div>
       ) : (
         <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="plans-list">
+          <Droppable droppableId="plans-list" direction="horizontal">
             {(provided) => (
-              <ul
-                className="space-y-6"
+              <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
               >
                 {plans.map((plan, index) => (
                   <Draggable key={plan._id} draggableId={plan._id} index={index}>
                     {(provided, snapshot) => (
-                      <li
+                      <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className={`p-6 rounded-lg shadow-lg bg-[var(--color-bg-card)] hover:shadow-xl transition transform hover:scale-[1.02] cursor-pointer ${
-                          snapshot.isDragging ? "opacity-90 scale-[1.02]" : ""
+                        className={`p-6 rounded-lg shadow-lg bg-[var(--color-bg-card)] hover:shadow-2xl transition transform hover:scale-105 cursor-pointer ${
+                          snapshot.isDragging ? "opacity-90 scale-105" : ""
                         }`}
                         onClick={() => navigate(`/dashboard/my-plans/${plan._id}`)}
                       >
@@ -106,7 +96,6 @@ function MyPlans() {
                           <p className="flex items-center gap-1 text-sm text-[var(--color-text)]">
                             <FaDumbbell /> Exercises: {plan.exercises.length}
                           </p>
-
                           <div className="mt-3">
                             <h4
                               className="font-semibold mb-2 flex items-center gap-2"
@@ -133,12 +122,12 @@ function MyPlans() {
                             )}
                           </div>
                         </div>
-                      </li>
+                      </div>
                     )}
                   </Draggable>
                 ))}
                 {provided.placeholder}
-              </ul>
+              </div>
             )}
           </Droppable>
         </DragDropContext>

@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 import logo from "../assets/wk-plan-logo.png";
 
 function Navbar() {
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // Esconder navbar em páginas do dashboard
   if (location.pathname.startsWith("/dashboard")) {
     return null;
   }
@@ -17,59 +19,70 @@ function Navbar() {
 
   return (
     <nav
-      className="shadow flex items-center justify-between px-6 py-3 sticky top-0 z-50"
+      className="shadow flex items-center justify-between px-4 sm:px-6 py-3 sticky top-0 z-50"
       style={{
         background: "var(--color-bg)",
         borderBottom: "1px solid var(--color-bg-card)",
       }}
     >
+      {/* Logo */}
       <div className="flex items-center gap-3">
         <Link to="/">
           <img
             src={logo}
             alt="WK-Plan logo"
-            className="w-12 md:w-14 h-auto object-contain"
+            className="md:w-44 h-auto object-contain"
             style={{ display: "block", cursor: "pointer" }}
           />
         </Link>
       </div>
 
-      <div className="flex gap-4">
+      {/* Desktop Links */}
+      <div className="hidden md:flex gap-4">
         {links.map((link) => (
           <Link
             key={link.to}
             to={link.to}
-            style={
+            className={`rounded-lg px-4 py-2 font-medium transition ${
               location.pathname === link.to
-                ? {
-                    background: "var(--color-accent)",
-                    color: "#fff",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
-                    borderRadius: "8px",
-                    padding: "7px 20px",
-                  }
-                : {
-                    color: "var(--color-accent)",
-                    borderRadius: "8px",
-                    padding: "7px 20px",
-                    transition: "background 0.2s, color 0.2s",
-                  }
-            }
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "var(--color-accent)";
-              e.currentTarget.style.color = "#fff";
-            }}
-            onMouseOut={(e) => {
-              if (location.pathname !== link.to) {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "var(--color-accent)";
-              }
-            }}
+                ? "bg-[var(--color-accent)] text-white shadow"
+                : "text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white"
+            }`}
           >
             {link.label}
           </Link>
         ))}
       </div>
+
+      {/* Mobile Hamburger */}
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="md:hidden p-2 rounded text-[var(--color-accent)]"
+      >
+        {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
+      </button>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div
+          className="absolute top-16 left-0 w-full bg-[var(--color-bg)] flex flex-col items-center gap-2 py-4 border-t border-[var(--color-accent)] md:hidden z-40"
+        >
+          {links.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={() => setMenuOpen(false)}
+              className={`rounded-lg px-4 py-2 w-4/5 text-center font-medium transition ${
+                location.pathname === link.to
+                  ? "bg-[var(--color-accent)] text-white shadow"
+                  : "text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
     </nav>
   );
 }

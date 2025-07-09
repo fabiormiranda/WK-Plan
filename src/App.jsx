@@ -18,6 +18,7 @@ import ChangePassword from "./pages/dashboard/ChangePassword.jsx";
 
 import PrivateRoute from "./components/PrivateRoute";
 import Loading from "./components/Loading";
+import { Toaster } from "react-hot-toast";
 
 function AppContent() {
   const { isLoading } = useContext(AuthContext);
@@ -55,6 +56,26 @@ function AppContent() {
           </Route>
         </Routes>
       </div>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: "#333",
+            color: "#fff",
+            fontSize: "0.9rem",
+          },
+          success: {
+            style: {
+              background: "#2d6a4f",
+            },
+          },
+          error: {
+            style: {
+              background: "#b02a37",
+            },
+          },
+        }}
+      />
     </>
   );
 }

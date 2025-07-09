@@ -5,6 +5,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import Loading from "../../components/Loading";
+import { toast } from "react-hot-toast";
 
 function CreatePlan() {
   const [exercises, setExercises] = useState([]);
@@ -17,7 +18,6 @@ function CreatePlan() {
   const [selectedDates, setSelectedDates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
-  const [successMsg, setSuccessMsg] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function CreatePlan() {
       })
       .catch(() => {
         setLoading(false);
-        alert("Error fetching exercises");
+        toast.error("Error fetching exercises.");
       });
   }, []);
 
@@ -69,11 +69,11 @@ function CreatePlan() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!planName || !difficulty || selectedExercises.length === 0) {
-      alert("Please enter all fields and select at least one exercise.");
+      toast.error("Please enter all fields and select at least one exercise.");
       return;
     }
     if (selectedDates.length === 0) {
-      alert("Please select at least one workout date.");
+      toast.error("Please select at least one workout date.");
       return;
     }
 
@@ -95,7 +95,8 @@ function CreatePlan() {
         }
       );
 
-      setSuccessMsg("Plan created successfully!");
+      toast.success("Workout plan created successfully!");
+
       setPlanName("");
       setDescription("");
       setDifficulty("easy");
@@ -106,11 +107,11 @@ function CreatePlan() {
       setTimeout(() => {
         setLoadingSubmit(false);
         navigate("/dashboard/my-plans");
-      }, 1800);
+      }, 1200);
     } catch (err) {
       setLoadingSubmit(false);
       const msg = err.response?.data?.message || "Error creating plan!";
-      alert(msg);
+      toast.error(msg);
     }
   };
 
@@ -126,48 +127,46 @@ function CreatePlan() {
         color: "var(--color-text)",
       }}
     >
-      {successMsg && (
-        <div className="mb-4 text-green-500 font-semibold text-center">
-          {successMsg}
-        </div>
-      )}
-
       <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-8">
         {/* Left: Form and Exercises */}
         <div className="flex flex-col gap-4 flex-1">
-          <h1 className="text-2xl font-bold mb-4" style={{ color: "var(--color-accent)" }}>
+          <h1 className="text-2xl font-bold mb-4 text-[var(--color-accent)]">
             Create New Workout Plan
           </h1>
 
-          <label>
-            <span className="font-semibold mb-1 block">Plan Name:</span>
-            <input
-              type="text"
-              value={planName}
-              onChange={(e) => setPlanName(e.target.value)}
-              className="block w-full p-3 rounded bg-[#18181b] border border-transparent focus:border-[var(--color-accent)] outline-none transition"
-              required
-              disabled={loadingSubmit}
-            />
-          </label>
-
-          <label>
-            <span className="font-semibold mb-1 block">Description:</span>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="block w-full p-3 rounded bg-[#18181b] border border-transparent focus:border-[var(--color-accent)] outline-none transition"
-              disabled={loadingSubmit}
-            />
-          </label>
+          {[
+            {
+              label: "Plan Name:",
+              value: planName,
+              onChange: setPlanName,
+              placeholder: "Enter your plan name",
+            },
+            {
+              label: "Description:",
+              value: description,
+              onChange: setDescription,
+              placeholder: "Short description (optional)",
+            },
+          ].map((field, idx) => (
+            <label key={idx}>
+              <span className="font-semibold mb-1 block">{field.label}</span>
+              <input
+                type="text"
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value)}
+                placeholder={field.placeholder}
+                className="block w-full p-3 rounded bg-white text-black placeholder-gray-400 border border-gray-300 focus:border-[var(--color-accent)] focus:outline-none transition"
+                disabled={loadingSubmit}
+              />
+            </label>
+          ))}
 
           <label>
             <span className="font-semibold mb-1 block">Difficulty:</span>
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
-              className="block w-full p-3 rounded bg-[#18181b] border border-transparent focus:border-[var(--color-accent)] outline-none transition"
+              className="block w-full p-3 rounded bg-white text-black border border-gray-300 focus:border-[var(--color-accent)] focus:outline-none transition"
               required
               disabled={loadingSubmit}
             >
@@ -182,7 +181,7 @@ function CreatePlan() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="block w-full p-3 rounded bg-[#18181b] border border-transparent focus:border-[var(--color-accent)] outline-none transition"
+              className="block w-full p-3 rounded bg-white text-black border border-gray-300 focus:border-[var(--color-accent)] focus:outline-none transition"
               disabled={loadingSubmit}
             >
               <option value="">All</option>
@@ -195,39 +194,40 @@ function CreatePlan() {
           </label>
 
           <div className="max-h-72 overflow-y-auto rounded border border-gray-700 bg-[var(--color-bg)] p-2">
-            {filteredExercises.length === 0 && (
+            {filteredExercises.length === 0 ? (
               <p className="text-center text-[var(--color-muted)]">No exercises found.</p>
-            )}
-            {filteredExercises.map((ex) => (
-              <label
-                key={ex._id}
-                className={`flex items-center gap-2 p-2 rounded cursor-pointer transition ${
-                  selectedExercises.includes(ex._id)
-                    ? "bg-[var(--color-accent)] text-white"
-                    : "bg-[var(--color-bg-card)] text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white"
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedExercises.includes(ex._id)}
-                  onChange={() => handleCheckboxChange(ex._id)}
-                  className="accent-[var(--color-accent)]"
-                  disabled={loadingSubmit}
-                />
-                <span>
-                  {ex.name}{" "}
-                  <span className="text-[var(--color-muted)] text-xs">
-                    ({ex.category})
+            ) : (
+              filteredExercises.map((ex) => (
+                <label
+                  key={ex._id}
+                  className={`flex items-center gap-2 p-2 rounded cursor-pointer transition ${
+                    selectedExercises.includes(ex._id)
+                      ? "bg-[var(--color-accent)] text-white"
+                      : "bg-[var(--color-bg-card)] text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedExercises.includes(ex._id)}
+                    onChange={() => handleCheckboxChange(ex._id)}
+                    className="accent-[var(--color-accent)]"
+                    disabled={loadingSubmit}
+                  />
+                  <span>
+                    {ex.name}{" "}
+                    <span className="text-[var(--color-muted)] text-xs">
+                      ({ex.category})
+                    </span>
                   </span>
-                </span>
-              </label>
-            ))}
+                </label>
+              ))
+            )}
           </div>
         </div>
 
         {/* Right: Calendar */}
         <div className="flex flex-col w-full lg:w-[45%]">
-          <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--color-accent)" }}>
+          <h2 className="text-2xl font-bold mb-4 text-[var(--color-accent)]">
             Select Workout Dates
           </h2>
           <FullCalendar
@@ -255,12 +255,7 @@ function CreatePlan() {
           />
           <button
             type="submit"
-            className="mt-6 py-3 rounded font-semibold shadow hover:opacity-90 transition"
-            style={{
-              backgroundColor: "var(--color-accent)",
-              color: "white",
-              cursor: loadingSubmit ? "not-allowed" : "pointer",
-            }}
+            className="mt-6 py-3 rounded font-semibold shadow hover:opacity-90 transition bg-[var(--color-accent)] text-white"
             disabled={loadingSubmit}
           >
             Create Plan

@@ -108,11 +108,11 @@ const ExerciseDetailPage = () => {
 
           {/* Back Button moved lower and more to the left */}
           <button
-            onClick={() => navigate("/dashboard/exercises")}
-            className="mt-6 ml-1 text-sm text-[var(--color-accent)] hover:text-orange-400 transition"
-          >
-            ← Back to Exercises
-          </button>
+  onClick={() => navigate("/dashboard/exercises")}
+  className="mt-6 ml-1 text-sm text-[var(--color-accent)] hover:text-white transition"
+>
+  ← Back to Exercises
+</button>
         </div>
 
         {/* Info */}

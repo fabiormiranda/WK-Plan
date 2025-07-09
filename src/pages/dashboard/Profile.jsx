@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import { FaUser, FaEnvelope, FaDumbbell, FaClipboardList, FaLock, FaSignOutAlt } from "react-icons/fa";
 
 function Profile() {
   const { user, logoutUser } = useContext(AuthContext);
@@ -18,7 +19,7 @@ function Profile() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userPlans = res.data.filter(
-          plan => plan.user === user._id || plan.user?._id === user._id
+          (plan) => plan.user === user._id || plan.user?._id === user._id
         );
         setPlansCount(userPlans.length);
         setRecentPlans(userPlans.slice(-3).reverse());
@@ -36,40 +37,57 @@ function Profile() {
   )}&background=FF6B00&color=fff&size=128`;
 
   return (
-    <div className="px-6 pt-8 pb-10 max-w-xl mx-auto" style={{ color: "var(--color-text)" }}>
-      <div className="flex items-center gap-4 mb-6">
-        <img
-          src={avatarUrl}
-          alt={user.name}
-          className="w-20 h-20 rounded-full border-2 border-[var(--color-accent)] object-cover"
-        />
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold mb-1 text-[var(--color-accent)]">Your Profile</h1>
-          <p className="text-sm text-[var(--color-muted)]">
-            Welcome back to WK-Plan, {user.name.split(" ")[0]}!
-          </p>
-        </div>
+    <div
+      className="mt-20 px-6 pb-10 max-w-md mx-auto rounded-lg shadow-lg"
+      style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
+    >
+      {/* Header */}
+      <div className="flex flex-col items-center mb-6 text-center mt-4">
+  <div className="rounded-full border-4 border-white p-1.5 shadow">
+    <img
+      src={avatarUrl}
+      alt={user.name}
+      className="w-24 h-24 rounded-full object-cover"
+    />
+  </div>
+  <h1 className="text-2xl font-bold mb-1 text-[var(--color-accent)] flex items-center gap-2 mt-3">
+    <FaUser /> Your Profile
+  </h1>
+  <p className="text-sm text-[var(--color-muted)]">
+    Welcome back to WK-Plan, {user.name.split(" ")[0]}!
+  </p>
+</div>
+
+      {/* User Info */}
+      <div className="mb-6 space-y-2 text-sm">
+        <p className="flex items-center gap-2">
+          <FaUser className="text-[var(--color-accent)]" /> <strong>Name:</strong> {user.name}
+        </p>
+        <p className="flex items-center gap-2">
+          <FaEnvelope className="text-[var(--color-accent)]" /> <strong>Email:</strong> {user.email}
+        </p>
       </div>
 
-      <div className="mb-6 space-y-1 text-sm">
-        <p><strong>Name:</strong> {user.name}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-      </div>
-
+      {/* Stats */}
       <div className="mb-6">
-        <h2 className="text-base font-semibold text-[var(--color-accent)] mb-2">Your Stats</h2>
-        <p>You have created <strong>{plansCount}</strong> workout plan{plansCount !== 1 && "s"}.</p>
+        <h2 className="text-base font-semibold text-[var(--color-accent)] mb-2 flex items-center gap-2">
+          <FaDumbbell /> Your Stats
+        </h2>
+        <p>You have created <span className="text-[var(--color-accent)] font-semibold">{plansCount}</span> workout plan{plansCount !== 1 && "s"}.</p>
       </div>
 
+      {/* Recent Plans */}
       {recentPlans.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-base font-semibold text-[var(--color-accent)] mb-2">Recent Plans</h2>
-          <ul className="list-disc ml-5 space-y-1 text-sm">
-            {recentPlans.map(plan => (
+          <h2 className="text-base font-semibold text-[var(--color-accent)] mb-2 flex items-center gap-2">
+            <FaClipboardList /> Recent Plans
+          </h2>
+          <ul className="list-none space-y-2">
+            {recentPlans.map((plan) => (
               <li key={plan._id}>
                 <button
                   onClick={() => navigate(`/dashboard/my-plans/${plan._id}`)}
-                  className="text-[var(--color-accent)] hover:underline"
+                  className="w-full text-left px-3 py-2 rounded bg-[var(--color-bg)] hover:bg-[var(--color-accent)] hover:text-white transition text-sm shadow"
                 >
                   {plan.title}
                 </button>
@@ -79,18 +97,22 @@ function Profile() {
         </div>
       )}
 
-      <div className="flex gap-3 mt-6">
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 mt-6">
+        {/* Change Password: Branco */}
         <button
           onClick={() => navigate("/dashboard/change-password")}
-          className="bg-[var(--color-accent)] text-white px-4 py-2 rounded hover:bg-[var(--color-accent-dark)] text-sm"
+          className="flex items-center justify-center gap-2 bg-white text-[var(--color-accent)] border border-[var(--color-accent)] px-4 py-2 rounded-lg hover:bg-[var(--color-accent)] hover:text-white text-sm shadow transition w-full sm:w-auto"
         >
-          Change Password
+          <FaLock /> Change Password
         </button>
+
+        {/* Logout: Vermelho */}
         <button
           onClick={logoutUser}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm"
+          className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm shadow transition w-full sm:w-auto"
         >
-          Logout
+          <FaSignOutAlt /> Logout
         </button>
       </div>
     </div>

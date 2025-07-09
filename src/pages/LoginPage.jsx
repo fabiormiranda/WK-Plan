@@ -4,7 +4,6 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import Loading from "../components/Loading";
 
-
 const API_URL = "https://wk-plan-backend.onrender.com/api/auth";
 
 function LoginPage() {
@@ -32,39 +31,27 @@ function LoginPage() {
 
       navigate("/dashboard/exercises");
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Login failed. Please try again.");
-      }
+      setError(err.response?.data?.message || "Login failed. Please try again.");
       setLoadingLocal(false);
     }
   };
 
-  if (loadingLocal) {
-    return <Loading />;
-  }
+  if (loadingLocal) return <Loading />;
 
   return (
-    <div
-      className="min-h-[80vh] flex flex-col justify-center items-center px-4 bg-[var(--color-bg)] text-[var(--color-text)]"
-    >
+    <div className="min-h-[80vh] flex flex-col justify-center items-center px-4 bg-[var(--color-bg)] text-[var(--color-text)]">
       <form
         onSubmit={handleLogin}
         className="max-w-md w-full rounded-2xl shadow-xl p-8 sm:p-10 flex flex-col gap-6 bg-[var(--color-bg-card)] text-[var(--color-text)]"
       >
         <div className="flex flex-col items-center mb-6">
-        
-          <h2
-            className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center"
-            style={{ color: "var(--color-accent)" }}
-          >
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center text-[var(--color-accent)]">
             Login to WK-Plan
           </h2>
         </div>
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {error && <p className="text-red-400 text-center">{error}</p>}
         <input
-          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition"
+          className="w-full p-3 rounded bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
           type="email"
           placeholder="Email"
           autoComplete="username"
@@ -73,7 +60,7 @@ function LoginPage() {
           required
         />
         <input
-          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition"
+          className="w-full p-3 rounded bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
           type="password"
           placeholder="Password"
           autoComplete="current-password"
@@ -84,7 +71,7 @@ function LoginPage() {
         <button
           type="submit"
           disabled={loadingLocal}
-          className={`w-full py-3 rounded text-white font-bold text-lg tracking-wide shadow transition ${
+          className={`w-full py-3 rounded text-white font-semibold text-lg tracking-wide shadow transition ${
             loadingLocal
               ? "bg-gray-500 cursor-not-allowed"
               : "bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)]"

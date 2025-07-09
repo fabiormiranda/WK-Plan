@@ -11,7 +11,7 @@ function Calendar({ events, onDateClick }) {
       events={events}
       dateClick={onDateClick}
       height="auto"
-      className="px-6 pt-6"
+      className="px-9 pt-6"
     />
   );
 }

@@ -37,25 +37,20 @@ function SignupPage() {
   };
 
   return (
-    <div
-      className="min-h-[80vh] flex flex-col justify-center items-center px-4 bg-[var(--color-bg)] text-[var(--color-text)]"
-    >
+    <div className="min-h-[80vh] flex flex-col justify-center items-center px-4 bg-[var(--color-bg)] text-[var(--color-text)]">
       <Toaster position="top-center" />
       <form
         onSubmit={handleSubmit}
         className="max-w-md w-full rounded-2xl shadow-xl p-8 sm:p-10 flex flex-col gap-6 bg-[var(--color-bg-card)] text-[var(--color-text)]"
       >
         <div className="flex flex-col items-center mb-6">
-          <h2
-            className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center"
-            style={{ color: "var(--color-accent)" }}
-          >
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center text-[var(--color-accent)]">
             Create Your WK-Plan Account
           </h2>
         </div>
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {error && <p className="text-red-400 text-center">{error}</p>}
         <input
-          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition"
+          className="w-full p-3 rounded bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
           placeholder="Name"
           type="text"
           autoComplete="name"
@@ -64,7 +59,7 @@ function SignupPage() {
           required
         />
         <input
-          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition"
+          className="w-full p-3 rounded bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
           placeholder="Email"
           type="email"
           autoComplete="email"
@@ -73,7 +68,7 @@ function SignupPage() {
           required
         />
         <input
-          className="w-full p-3 rounded bg-[#18181b] border border-[var(--color-bg-card)] focus:border-[var(--color-accent)] outline-none transition"
+          className="w-full p-3 rounded bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
           placeholder="Password"
           type="password"
           autoComplete="new-password"
