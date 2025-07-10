@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaPlusCircle } from "react-icons/fa";
 
 function Exercises() {
   const [exercises, setExercises] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -14,10 +15,8 @@ function Exercises() {
       .then((res) => res.json())
       .then((data) => {
         setExercises(data);
-        setLoading(false);
       })
       .catch(() => {
-        setLoading(false);
         alert("Error fetching exercises");
       });
   }, []);
@@ -28,74 +27,69 @@ function Exercises() {
     ? exercises.filter((ex) => ex.category === filter)
     : exercises;
 
-  if (loading) {
-    return (
-      <div className="min-h-[80vh] flex justify-center items-center text-[var(--color-text)]">
-        Loading exercises...
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-7xl mx-auto px-4 pb-4 pt-10">
       <div
-        className="min-h-[80vh] max-h-[80vh] overflow-y-auto overflow-x-hidden my-scrollbar px-4 sm:px-6"
+        className="min-h-[80vh] max-h-[80vh] overflow-y-auto overflow-x-hidden my-scrollbar px-4 sm:px-6 relative"
         style={{
           backgroundColor: "var(--color-bg)",
           color: "var(--color-text)",
         }}
       >
-        <h1
-          className="text-4xl font-extrabold mb-6 text-left"
-          style={{ color: "var(--color-accent)" }}
+        {/* Fixed Header */}
+        <div
+          className="sticky top-0 z-10 py-4"
+          style={{ backgroundColor: "var(--color-bg)" }}
         >
-          Exercises
-        </h1>
+          {/* Title + Add Button */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+            <h1
+              className="text-4xl font-extrabold text-left"
+              style={{ color: "var(--color-accent)" }}
+            >
+              Exercises
+            </h1>
+            <button
+              className="flex items-center gap-2 px-4 py-2 rounded font-semibold border border-[var(--color-accent)] text-[var(--color-accent)] bg-white hover:bg-[var(--color-accent)] hover:text-white transition shadow"
+              onClick={() => navigate("/dashboard/add-exercise")}
+            >
+              <FaPlusCircle />
+              Add Exercise
+            </button>
+          </div>
 
-        <div className="mb-6 mt-4 flex flex-wrap items-center gap-2">
-          <label
-            htmlFor="filter"
-            className="font-medium text-left"
-            style={{ color: "var(--color-text)" }}
-          >
-            Filter by Category:
-          </label>
-          <select
-            id="filter"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="p-2 rounded-lg border text-sm"
-            style={{
-              backgroundColor: "var(--color-bg-card)",
-              color: "var(--color-text)",
-              borderColor: "var(--color-accent)",
-            }}
-          >
-            <option
-              value=""
+          {/* Filter */}
+          <div className="flex flex-wrap items-center gap-2">
+            <label
+              htmlFor="filter"
+              className="font-medium text-left"
+              style={{ color: "var(--color-text)" }}
+            >
+              Filter by Category:
+            </label>
+            <select
+              id="filter"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="p-2 rounded-lg border text-sm"
               style={{
                 backgroundColor: "var(--color-bg-card)",
                 color: "var(--color-text)",
+                borderColor: "var(--color-accent)",
               }}
             >
-              All
-            </option>
-            {categories.map((cat) => (
-              <option
-                key={cat}
-                value={cat}
-                style={{
-                  backgroundColor: "var(--color-bg-card)",
-                  color: "var(--color-text)",
-                }}
-              >
-                {cat}
-              </option>
-            ))}
-          </select>
+              <option value="">All</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {filteredExercises.map((ex) => (
             <Link
               key={ex._id}

@@ -8,7 +8,6 @@ const ExerciseDetailPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Load exercises
   useEffect(() => {
     if (location.state && location.state.exercises) {
       setExercises(location.state.exercises);
@@ -29,17 +28,11 @@ const ExerciseDetailPage = () => {
           );
           setExercise(foundExercise);
         })
-        .catch(() => alert("Error fetching exercise details"));
+        .catch(() => console.error("Error fetching exercise details"));
     }
   }, [exerciseSlug, location.state]);
 
-  if (!exercise) {
-    return (
-      <div className="min-h-[80vh] flex justify-center items-center text-[var(--color-text)]">
-        Loading exercise details...
-      </div>
-    );
-  }
+  if (!exercise) return null;
 
   const currentIndex = exercises.findIndex(
     (ex) => ex.name.toLowerCase().replace(/\s+/g, "-") === exerciseSlug
@@ -88,7 +81,7 @@ const ExerciseDetailPage = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 pt-12 pb-6 text-[var(--color-text)]">
       <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* GIF */}
+        {/* Video */}
         <div className="flex flex-col items-start w-full lg:w-[40%]">
           <video
             src={videoSrc}
@@ -105,19 +98,16 @@ const ExerciseDetailPage = () => {
               e.target.parentNode.appendChild(placeholder);
             }}
           />
-
-          {/* Back Button moved lower and more to the left */}
           <button
-  onClick={() => navigate("/dashboard/exercises")}
-  className="mt-6 ml-1 text-sm text-[var(--color-accent)] hover:text-white transition"
->
-  ← Back to Exercises
-</button>
+            onClick={() => navigate("/dashboard/exercises")}
+            className="mt-6 ml-1 text-sm text-[var(--color-accent)] hover:text-white transition"
+          >
+            ← Back to Exercises
+          </button>
         </div>
 
         {/* Info */}
-        <div className="flex-1 flex flex-col gap-6 max-w-2xl">
-          {/* Title and Target Muscles inline */}
+        <div className="flex-1 flex flex-col gap-6 max-w-2xl relative">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <h1
               className="text-3xl font-extrabold mb-2 sm:mb-0"
@@ -143,23 +133,39 @@ const ExerciseDetailPage = () => {
             {renderGuide(exercise.guide)}
           </div>
 
-          {/* Next / Previous Buttons */}
+          {/* Navigation Buttons */}
           {exercises.length > 1 && (
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-center gap-35 mt-10">
               <button
                 onClick={handlePrev}
-                className="px-4 py-2 rounded bg-[var(--color-accent)] text-white hover:opacity-90 transition"
+                className="px-5 py-2 rounded bg-[var(--color-accent)] text-white hover:opacity-90 transition shadow"
               >
                 ← Previous
               </button>
               <button
                 onClick={handleNext}
-                className="px-4 py-2 rounded bg-[var(--color-accent)] text-white hover:opacity-90 transition"
+                className="px-5 py-2 rounded bg-[var(--color-accent)] text-white hover:opacity-90 transition shadow"
               >
                 Next →
               </button>
             </div>
           )}
+
+          {/* Edit/Delete Buttons aligned right */}
+          <div className="flex justify-end gap-5 mt-30">
+            <button
+              onClick={() => navigate(`/dashboard/edit-exercise/${exercise._id}`)}
+              className="px-4 py-2 rounded bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow"
+            >
+              Edit Exercise
+            </button>
+            <button
+              onClick={() => navigate(`/dashboard/delete-exercise/${exercise._id}`)}
+              className="px-4 py-2 rounded bg-red-600 text-white hover:opacity-90 transition shadow"
+            >
+              Delete Exercise
+            </button>
+          </div>
         </div>
       </div>
     </div>

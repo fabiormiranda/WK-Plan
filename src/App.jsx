@@ -9,12 +9,16 @@ import { AuthProvider, AuthContext } from "./context/AuthContext";
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import Exercises from "./pages/dashboard/Exercises";
+import ExerciseDetailPage from "./pages/dashboard/ExerciseDetailPage";
+import AddExercise from "./pages/dashboard/AddExercise";
+import EditExercise from "./pages/dashboard/EditExercise";
+import DeleteExercise from "./pages/dashboard/DeleteExercise";
+
 import MyPlans from "./pages/dashboard/MyPlans";
-import Profile from "./pages/dashboard/Profile";
-import CreatePlan from "./pages/dashboard/CreatePlan";
-import ExerciseDetailPage from "./pages/dashboard/ExerciseDetailPage.jsx";
 import MyPlanDetail from "./pages/dashboard/MyPlanDetail";
-import ChangePassword from "./pages/dashboard/ChangePassword.jsx";
+import CreatePlan from "./pages/dashboard/CreatePlan";
+import Profile from "./pages/dashboard/Profile";
+import ChangePassword from "./pages/dashboard/ChangePassword";
 
 import PrivateRoute from "./components/PrivateRoute";
 import Loading from "./components/Loading";
@@ -30,32 +34,35 @@ function AppContent() {
   return (
     <>
       <Navbar />
-      <div>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
 
-          {/* Dashboard protegido */}
-          <Route
-            path="/dashboard/*"
-            element={
-              <PrivateRoute>
-                <DashboardLayout />
-              </PrivateRoute>
-            }
-          >
-            <Route index element={<DashboardHome />} />
-            <Route path="create-plan" element={<CreatePlan />} />
-            <Route path="exercises" element={<Exercises />} />
-            <Route path="exercises/:exerciseSlug" element={<ExerciseDetailPage />} />
-            <Route path="my-plans" element={<MyPlans />} />
-            <Route path="my-plans/:planId" element={<MyPlanDetail />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="change-password" element={<ChangePassword />} />
-          </Route>
-        </Routes>
-      </div>
+        {/* Protected Dashboard Routes */}
+        <Route
+          path="/dashboard/*"
+          element={
+            <PrivateRoute>
+              <DashboardLayout />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<DashboardHome />} />
+          <Route path="create-plan" element={<CreatePlan />} />
+          <Route path="exercises" element={<Exercises />} />
+          <Route path="exercises/:exerciseSlug" element={<ExerciseDetailPage />} />
+          <Route path="add-exercise" element={<AddExercise />} />
+          <Route path="edit-exercise/:exerciseId" element={<EditExercise />} />
+          <Route path="delete-exercise/:exerciseId" element={<DeleteExercise />} />
+          <Route path="my-plans" element={<MyPlans />} />
+          <Route path="my-plans/:planId" element={<MyPlanDetail />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="change-password" element={<ChangePassword />} />
+        </Route>
+      </Routes>
+
       <Toaster
         position="top-center"
         toastOptions={{

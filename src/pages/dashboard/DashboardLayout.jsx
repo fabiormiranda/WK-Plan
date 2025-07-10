@@ -18,7 +18,16 @@ function DashboardLayout() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="bg-[var(--color-bg)] min-h-screen flex">
+    <div className="bg-[var(--color-bg)] min-h-screen flex relative">
+
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Mobile toggle button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -29,10 +38,10 @@ function DashboardLayout() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-screen w-60 p-4 flex flex-col bg-[var(--color-bg-card)] text-[var(--color-text)] border-r border-[var(--color-accent)] overflow-y-auto transform transition-transform duration-300
+        className={`fixed top-0 left-0 h-screen w-60 p-4 flex flex-col bg-[var(--color-bg-card)] text-[var(--color-text)] border-r border-[var(--color-accent)] overflow-y-auto transform transition-transform duration-300 z-50
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
-        {/* Logo - agora leva à homepage */}
+        {/* Logo */}
         <Link to="/" onClick={() => setSidebarOpen(false)}>
           <img
             src={logo}
@@ -86,7 +95,7 @@ function DashboardLayout() {
         </button>
       </aside>
 
-      {/* Main */}
+      {/* Main Content */}
       <main className="flex-1 md:ml-60 px-6 sm:px-8 pb-4 pt-16 md:pt-8 bg-[var(--color-bg)] transition-all">
         <Outlet />
       </main>
