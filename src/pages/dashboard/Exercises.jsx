@@ -9,7 +9,7 @@ function Exercises() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    fetch("http://localhost:5000/api/exercises", {
+    fetch("https://wk-plan-backend.onrender.com/api/exercises", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
