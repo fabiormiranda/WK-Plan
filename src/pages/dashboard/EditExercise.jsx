@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import Loading from "../../components/Loading";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function EditExercise() {
   const { exerciseId } = useParams();
   const [name, setName] = useState("");
@@ -17,8 +19,7 @@ function EditExercise() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios
-      .get(`http://localhost:5000/api/exercises/${exerciseId}`, {
+    axios.get(`${API_URL}/exercises/${exerciseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -30,8 +31,7 @@ function EditExercise() {
       })
       .catch(() => toast.error("Error fetching exercise data."));
 
-    axios
-      .get("http://localhost:5000/api/exercises", {
+    axios.get(`${API_URL}/exercises`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -55,8 +55,7 @@ function EditExercise() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:5000/api/exercises/${exerciseId}`,
+      await axios.put(`${API_URL}/exercises/${exerciseId}`,
         { name, category, guide, mediaUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );

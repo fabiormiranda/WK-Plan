@@ -1,6 +1,8 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const ExerciseDetailPage = () => {
   const { exerciseSlug } = useParams();
   const [exercise, setExercise] = useState(null);
@@ -17,9 +19,9 @@ const ExerciseDetailPage = () => {
       setExercise(foundExercise);
     } else {
       const token = localStorage.getItem("token");
-      fetch(`http://localhost:5000/api/exercises`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+     fetch(`${API_URL}/exercises`, {
+  headers: { Authorization: `Bearer ${token}` },
+})
         .then((res) => res.json())
         .then((data) => {
           setExercises(data);

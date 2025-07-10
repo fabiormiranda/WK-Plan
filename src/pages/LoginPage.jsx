@@ -4,7 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import Loading from "../components/Loading";
 
-const API_URL = "https://wk-plan-backend.onrender.com/api/auth";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -21,7 +21,7 @@ function LoginPage() {
     setLoadingLocal(true);
 
     try {
-      const response = await axios.post(`${API_URL}/login`, { email, password });
+      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
       const data = response.data;
 
       loginUser(

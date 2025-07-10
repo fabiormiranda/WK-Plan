@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = "https://wk-plan-backend.onrender.com/api/auth";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function SignupPage() {
   const [name, setName] = useState("");
@@ -17,7 +17,7 @@ function SignupPage() {
     setError(null);
 
     try {
-      await axios.post(`${API_URL}/signup`, { name, email, password });
+      await axios.post(`${API_URL}/auth/signup`, { name, email, password });
       toast.success("Account created successfully! 🎉 Redirecting to login...", {
         style: {
           background: "var(--color-bg-card)",

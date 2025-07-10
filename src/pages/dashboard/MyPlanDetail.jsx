@@ -5,6 +5,8 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import Loading from "../../components/Loading";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function MyPlanDetail() {
   const { planId } = useParams();
   const [plan, setPlan] = useState(null);
@@ -24,7 +26,7 @@ function MyPlanDetail() {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await axios.get(`http://localhost:5000/api/workout-plans/${planId}`, {
+        const res = await axios.get(`${API_URL}/workout-plans/${planId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPlan(res.data);
@@ -33,7 +35,9 @@ function MyPlanDetail() {
         setDifficulty(res.data.difficulty || "easy");
         setSelectedExercises(res.data.exercises.map((ex) => ex._id));
 
-        const exRes = await axios.get("http://localhost:5000/api/exercises");
+        const exRes = await axios.get(`${API_URL}/exercises`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setAllExercises(exRes.data);
       } catch {
         toast.error("Failed to load plan data.");
@@ -61,11 +65,11 @@ function MyPlanDetail() {
     setActionLoading(true);
     try {
       await axios.put(
-        `http://localhost:5000/api/workout-plans/${planId}`,
+        `${API_URL}/workout-plans/${planId}`,
         { title, description, difficulty, exercises: selectedExercises },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      const res = await axios.get(`http://localhost:5000/api/workout-plans/${planId}`, {
+      const res = await axios.get(`${API_URL}/workout-plans/${planId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPlan(res.data);
@@ -87,7 +91,7 @@ function MyPlanDetail() {
     const token = localStorage.getItem("token");
     setActionLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/api/workout-plans/${planId}`, {
+      await axios.delete(`${API_URL}/workout-plans/${planId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTimeout(() => {
@@ -116,20 +120,33 @@ function MyPlanDetail() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 px-6 pt-12 pb-12 rounded-lg shadow-lg"
-      style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}>
-      <h1 className="text-2xl sm:text-3xl font-extrabold mb-8 text-[var(--color-accent)]">Workout Plan Details</h1>
+    <div
+      className="max-w-4xl mx-auto mt-8 px-6 pt-12 pb-12 rounded-lg shadow-lg"
+      style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
+    >
+      <h1 className="text-2xl sm:text-3xl font-extrabold mb-8 text-[var(--color-accent)]">
+        Workout Plan Details
+      </h1>
 
       {!editMode ? (
         <>
           <section className="mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold mb-1 text-[var(--color-accent)]">{plan.title}</h2>
-            <p className="text-base mb-1 text-[var(--color-muted)] italic">{plan.description || "No description provided."}</p>
-            <p className="text-sm">Difficulty: <span style={{ color: "var(--color-accent)" }}>{plan.difficulty}</span></p>
+            <h2 className="text-xl sm:text-2xl font-bold mb-1 text-[var(--color-accent)]">
+              {plan.title}
+            </h2>
+            <p className="text-base mb-1 text-[var(--color-muted)] italic">
+              {plan.description || "No description provided."}
+            </p>
+            <p className="text-sm">
+              Difficulty:{" "}
+              <span style={{ color: "var(--color-accent)" }}>{plan.difficulty}</span>
+            </p>
           </section>
 
           <section className="mb-8">
-            <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">Exercises</h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">
+              Exercises
+            </h3>
             {plan.exercises.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {plan.exercises.map((ex) => (
@@ -159,12 +176,16 @@ function MyPlanDetail() {
           </section>
 
           <section className="mb-8">
-            <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">Workout Dates</h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">
+              Workout Dates
+            </h3>
             {plan.dates && plan.dates.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {plan.dates.map((date) => (
-                  <span key={date}
-                    className="px-3 py-1 rounded-full text-xs font-semibold bg-[var(--color-accent)] text-white shadow transition transform hover:scale-105">
+                  <span
+                    key={date}
+                    className="px-3 py-1 rounded-full text-xs font-semibold bg-[var(--color-accent)] text-white shadow transition transform hover:scale-105"
+                  >
                     {formatDate(date)}
                   </span>
                 ))}
@@ -191,8 +212,9 @@ function MyPlanDetail() {
         </>
       ) : (
         <form onSubmit={handleUpdate} className="space-y-4">
-          {[{ label: "Title:", value: title, setter: setTitle, placeholder: "Plan title", required: true },
-            { label: "Description:", value: description, setter: setDescription, placeholder: "Description" }
+          {[
+            { label: "Title:", value: title, setter: setTitle, placeholder: "Plan title", required: true },
+            { label: "Description:", value: description, setter: setDescription, placeholder: "Description" },
           ].map((field, idx) => (
             <div key={idx}>
               <label className="block font-semibold mb-1 text-sm">{field.label}</label>
@@ -229,7 +251,9 @@ function MyPlanDetail() {
             >
               <option value="">All</option>
               {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
           </div>
@@ -238,28 +262,37 @@ function MyPlanDetail() {
             <span className="font-semibold text-[var(--color-accent)] text-sm">Select Exercises:</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 max-h-56 overflow-y-auto rounded border border-gray-300 p-2 bg-[var(--color-bg-card)]">
               {filteredExercises.map((ex) => (
-                <label key={ex._id}
-                  className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition text-sm">
+                <label
+                  key={ex._id}
+                  className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition text-sm"
+                >
                   <input
                     type="checkbox"
                     checked={selectedExercises.includes(ex._id)}
                     onChange={() => handleCheckboxChange(ex._id)}
                     className="accent-[var(--color-accent)]"
                   />
-                  <span>{ex.name} <span className="text-xs text-[var(--color-muted)]">({ex.category})</span></span>
+                  <span>
+                    {ex.name}{" "}
+                    <span className="text-xs text-[var(--color-muted)]">({ex.category})</span>
+                  </span>
                 </label>
               ))}
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-4">
-            <button type="submit"
-              className="px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto">
+            <button
+              type="submit"
+              className="px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto"
+            >
               Save Changes
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setEditMode(false)}
-              className="px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto">
+              className="px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto"
+            >
               Cancel
             </button>
           </div>

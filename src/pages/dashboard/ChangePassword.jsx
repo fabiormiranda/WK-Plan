@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Loading from "../../components/Loading";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -24,10 +26,10 @@ function ChangePassword() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.put(
-          "http://localhost:5000/api/auth/change-password",
-          { currentPassword, newPassword },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+  `${API_URL}/auth/change-password`,
+  { currentPassword, newPassword },
+  { headers: { Authorization: `Bearer ${token}` } }
+);
         toast.success(res.data.message || "Password changed successfully!");
         setCurrentPassword("");
         setNewPassword("");

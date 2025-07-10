@@ -7,6 +7,8 @@ import interactionPlugin from "@fullcalendar/interaction";
 import Loading from "../../components/Loading";
 import { toast } from "react-hot-toast";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function CreatePlan() {
   const [exercises, setExercises] = useState([]);
   const [filteredExercises, setFilteredExercises] = useState([]);
@@ -21,8 +23,7 @@ function CreatePlan() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/exercises")
+    axios.get(`${API_URL}/exercises`)
       .then((res) => {
         setExercises(res.data);
         setFilteredExercises(res.data);
@@ -81,8 +82,7 @@ function CreatePlan() {
       setLoadingSubmit(true);
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        "http://localhost:5000/api/workout-plans",
+      await axios.post(`${API_URL}/workout-plans`,
         {
           title: planName,
           description,

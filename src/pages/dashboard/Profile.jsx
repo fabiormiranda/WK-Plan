@@ -2,7 +2,16 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
-import { FaUser, FaEnvelope, FaDumbbell, FaClipboardList, FaLock, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaUser,
+  FaEnvelope,
+  FaDumbbell,
+  FaClipboardList,
+  FaLock,
+  FaSignOutAlt,
+} from "react-icons/fa";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Profile() {
   const { user, logoutUser } = useContext(AuthContext);
@@ -15,7 +24,7 @@ function Profile() {
       if (!user) return;
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/workout-plans", {
+        const res = await axios.get(`${API_URL}/workout-plans`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userPlans = res.data.filter(
@@ -43,20 +52,20 @@ function Profile() {
     >
       {/* Header */}
       <div className="flex flex-col items-center mb-6 text-center mt-4">
-  <div className="rounded-full border-4 border-white p-1.5 shadow">
-    <img
-      src={avatarUrl}
-      alt={user.name}
-      className="w-24 h-24 rounded-full object-cover"
-    />
-  </div>
-  <h1 className="text-2xl font-bold mb-1 text-[var(--color-accent)] flex items-center gap-2 mt-3">
-    <FaUser /> Your Profile
-  </h1>
-  <p className="text-sm text-[var(--color-muted)]">
-    Welcome back to WK-Plan, {user.name.split(" ")[0]}!
-  </p>
-</div>
+        <div className="rounded-full border-4 border-white p-1.5 shadow">
+          <img
+            src={avatarUrl}
+            alt={user.name}
+            className="w-24 h-24 rounded-full object-cover"
+          />
+        </div>
+        <h1 className="text-2xl font-bold mb-1 text-[var(--color-accent)] flex items-center gap-2 mt-3">
+          <FaUser /> Your Profile
+        </h1>
+        <p className="text-sm text-[var(--color-muted)]">
+          Welcome back to WK-Plan, {user.name.split(" ")[0]}!
+        </p>
+      </div>
 
       {/* User Info */}
       <div className="mb-6 space-y-2 text-sm">
@@ -73,7 +82,11 @@ function Profile() {
         <h2 className="text-base font-semibold text-[var(--color-accent)] mb-2 flex items-center gap-2">
           <FaDumbbell /> Your Stats
         </h2>
-        <p>You have created <span className="text-[var(--color-accent)] font-semibold">{plansCount}</span> workout plan{plansCount !== 1 && "s"}.</p>
+        <p>
+          You have created{" "}
+          <span className="text-[var(--color-accent)] font-semibold">{plansCount}</span>{" "}
+          workout plan{plansCount !== 1 && "s"}.
+        </p>
       </div>
 
       {/* Recent Plans */}
@@ -99,7 +112,6 @@ function Profile() {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-3 mt-6">
-        {/* Change Password: Branco */}
         <button
           onClick={() => navigate("/dashboard/change-password")}
           className="flex items-center justify-center gap-2 bg-white text-[var(--color-accent)] border border-[var(--color-accent)] px-4 py-2 rounded-lg hover:bg-[var(--color-accent)] hover:text-white text-sm shadow transition w-full sm:w-auto"
@@ -107,7 +119,6 @@ function Profile() {
           <FaLock /> Change Password
         </button>
 
-        {/* Logout: Vermelho */}
         <button
           onClick={logoutUser}
           className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm shadow transition w-full sm:w-auto"

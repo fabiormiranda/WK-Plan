@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Loading from "../../components/Loading";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function AddExercise() {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -16,8 +18,7 @@ function AddExercise() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios
-      .get("http://localhost:5000/api/exercises", {
+    axios.get(`${API_URL}/exercises`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -63,8 +64,7 @@ function AddExercise() {
 
   const sendExercise = async (mediaUrl) => {
     const token = localStorage.getItem("token");
-    await axios.post(
-      "http://localhost:5000/api/exercises",
+    await axios.post(`${API_URL}/exercises`,
       { name, category, guide, mediaUrl },
       { headers: { Authorization: `Bearer ${token}` } }
     );

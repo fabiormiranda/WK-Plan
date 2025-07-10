@@ -4,18 +4,19 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Loading from "../../components/Loading";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function DeleteExercise() {
   const { exerciseId } = useParams();
   const [exercise, setExercise] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [deleting, setDeleting] = useState(false); // new
+  const [deleting, setDeleting] = useState(false); 
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios
-      .get(`http://localhost:5000/api/exercises/${exerciseId}`, {
+    axios.get(`${API_URL}/exercises/${exerciseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setExercise(res.data))
@@ -27,7 +28,7 @@ function DeleteExercise() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/exercises/${exerciseId}`, {
+      await axios.delete(`${API_URL}/exercises/${exerciseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

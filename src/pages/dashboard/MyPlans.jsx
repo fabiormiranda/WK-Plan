@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { FaDumbbell, FaCalendarAlt, FaPlusCircle } from "react-icons/fa";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function MyPlans() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +14,7 @@ function MyPlans() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     axios
-      .get("http://localhost:5000/api/workout-plans", {
+      .get(`${API_URL}/workout-plans`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -40,16 +42,16 @@ function MyPlans() {
   return (
     <div className="px-6 pt-14 pb-8 max-w-6xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-1 sm:gap-50">
-  <h1 className="text-3xl font-bold" style={{ color: "var(--color-accent)" }}>
-    My Plans
-  </h1>
-  <button
-    className="flex items-center gap-2 px-5 py-2 rounded font-semibold border border-[var(--color-accent)] text-[var(--color-accent)] bg-white hover:bg-[var(--color-accent)] hover:text-white transition shadow sm:ml-6"
-    onClick={() => navigate("/dashboard/create-plan")}
-  >
-    <FaPlusCircle /> Create New Plan
-  </button>
-</div>
+        <h1 className="text-3xl font-bold" style={{ color: "var(--color-accent)" }}>
+          My Plans
+        </h1>
+        <button
+          className="flex items-center gap-2 px-5 py-2 rounded font-semibold border border-[var(--color-accent)] text-[var(--color-accent)] bg-white hover:bg-[var(--color-accent)] hover:text-white transition shadow sm:ml-6"
+          onClick={() => navigate("/dashboard/create-plan")}
+        >
+          <FaPlusCircle /> Create New Plan
+        </button>
+      </div>
 
       {plans.length === 0 ? (
         <div className="flex flex-col items-center justify-center pt-24 text-center text-[var(--color-muted)] italic">

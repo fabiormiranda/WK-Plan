@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaPlusCircle } from "react-icons/fa";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Exercises() {
   const [exercises, setExercises] = useState([]);
   const [filter, setFilter] = useState("");
@@ -9,9 +11,9 @@ function Exercises() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    fetch("https://wk-plan-backend.onrender.com/api/exercises", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch(`${API_URL}/exercises`, {
+  headers: { Authorization: `Bearer ${token}` },
+})
       .then((res) => res.json())
       .then((data) => {
         setExercises(data);
