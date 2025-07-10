@@ -6,7 +6,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  // Lê o user e token do localStorage ao iniciar
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
@@ -20,7 +19,7 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Atualiza localStorage sempre que user/token mudam
+  // Keep localStorage updated when user or token changes
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
@@ -35,7 +34,7 @@ export function AuthProvider({ children }) {
     }
   }, [token, user]);
 
-  // Verifica token com o backend
+  // Verify token with backend on initial load
   const authenticateUser = async () => {
     const storedToken = localStorage.getItem("token");
 
@@ -45,39 +44,40 @@ export function AuthProvider({ children }) {
           headers: { Authorization: `Bearer ${storedToken}` },
         });
 
+        console.log("Valid token, user:", response.data);
         setUser(response.data);
         setToken(storedToken);
         setIsLoggedIn(true);
       } catch (err) {
-        console.error("Token inválido ou expirado", err);
+        console.error("Invalid or expired token", err.response?.data || err.message);
         setUser(null);
         setToken(null);
         setIsLoggedIn(false);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setUser(null);
       setToken(null);
       setIsLoggedIn(false);
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
-  // Login: define user e token recebidos
+  // Login: set user and token received from backend
   const loginUser = (userData, jwtToken) => {
     setUser(userData);
     setToken(jwtToken);
     setIsLoggedIn(true);
   };
 
-  // Logout: limpa tudo
+  // Logout: clear user and token
   const logoutUser = () => {
     setUser(null);
     setToken(null);
     setIsLoggedIn(false);
   };
 
-  // Executa no arranque da app
   useEffect(() => {
     authenticateUser();
   }, []);
