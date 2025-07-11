@@ -3,29 +3,29 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-// Get the API URL from environment variables
+// Load API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 function SignupPage() {
-  // State for user input fields and error message
+  // State for user input and error handling
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-
-  // Hook to navigate programmatically
   const navigate = useNavigate();
 
-  // Handles the form submission for user registration
+  /**
+   * Handle form submission for user signup
+   */
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form reload
-    setError(null); // Clear previous errors
+    e.preventDefault();
+    setError(null);
 
     try {
-      // Send POST request to signup endpoint with user data
+      // Send POST request to backend for user signup
       await axios.post(`${API_URL}/auth/signup`, { name, email, password });
 
-      // Show success toast and redirect to login after 2 seconds
+      // Show success toast
       toast.success("Account created successfully! 🎉 Redirecting to login...", {
         style: {
           background: "var(--color-bg-card)",
@@ -37,10 +37,15 @@ function SignupPage() {
           secondary: "var(--color-bg)",
         },
       });
+
+      // Redirect to login page after 2 seconds
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      // Get error message from response or use a default message
-      const message = err.response?.data?.message || "Signup failed. Please try again.";
+      // Display error message if signup fails
+      const message =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Signup failed. Please try again.";
       setError(message);
     }
   };
@@ -51,16 +56,15 @@ function SignupPage() {
         onSubmit={handleSubmit}
         className="max-w-md w-full rounded-2xl shadow-xl p-8 sm:p-10 flex flex-col gap-6 bg-[var(--color-bg-card)] text-[var(--color-text)]"
       >
-        <div className="flex flex-col items-center mb-6">
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center text-[var(--color-accent)]">
-            Create Your WK-Plan Account
-          </h2>
-        </div>
+        {/* Title */}
+        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center text-[var(--color-accent)]">
+          Create Your WK-Plan Account
+        </h2>
 
-        {/* Display error message if there is one */}
+        {/* Display error message if signup fails */}
         {error && <p className="text-red-400 text-center">{error}</p>}
 
-        {/* Input for user name */}
+        {/* Name input */}
         <input
           className="w-full p-3 rounded bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
           placeholder="Name"
@@ -71,7 +75,7 @@ function SignupPage() {
           required
         />
 
-        {/* Input for user email */}
+        {/* Email input */}
         <input
           className="w-full p-3 rounded bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
           placeholder="Email"
@@ -82,7 +86,7 @@ function SignupPage() {
           required
         />
 
-        {/* Input for user password */}
+        {/* Password input */}
         <input
           className="w-full p-3 rounded bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
           placeholder="Password"
@@ -101,13 +105,10 @@ function SignupPage() {
           Register
         </button>
 
-        {/* Link to login page for users who already have an account */}
+        {/* Link to Login */}
         <div className="text-sm text-[var(--color-muted)] text-center">
           Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-[var(--color-accent)] hover:underline font-semibold"
-          >
+          <Link to="/login" className="text-[var(--color-accent)] hover:underline font-semibold">
             Log in
           </Link>
         </div>

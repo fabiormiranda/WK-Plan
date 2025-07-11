@@ -49,14 +49,13 @@ function DashboardLayout() {
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         {/* Logo */}
-        <Link to="/" onClick={() => setSidebarOpen(false)}>
+      
           <img
             src={logo}
             alt="WK-Plan logo"
             className="w-32 mx-auto mb-6"
-            style={{ cursor: "pointer" }}
           />
-        </Link>
+      
 
         {/* Navigation */}
         <nav className="flex flex-col gap-2 flex-grow">

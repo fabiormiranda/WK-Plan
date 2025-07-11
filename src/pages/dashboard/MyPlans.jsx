@@ -4,38 +4,40 @@ import { useNavigate } from "react-router-dom";
 import { FaDumbbell, FaCalendarAlt, FaPlusCircle } from "react-icons/fa";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-// Get the API URL from environment variables
+// Get API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 function MyPlans() {
-  // State to store fetched plans and loading status
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // Fetch workout plans on component mount
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${API_URL}/workout-plans`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setPlans(res.data);
+    const fetchPlans = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${API_URL}/workout-plans`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setPlans(response.data);
+      } catch (error) {
+        console.error("Error fetching plans:", error);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchPlans();
   }, []);
 
-  // Format dates to readable short format
+  // Format date to readable format
   const formatDate = (dateStr) => {
     const options = { weekday: "short", month: "short", day: "numeric" };
     return new Date(dateStr).toLocaleDateString("en-US", options);
   };
 
-  // Handle drag and drop reordering of plans locally
+  // Handle drag-and-drop reordering locally
   const handleDragEnd = (result) => {
     if (!result.destination) return;
     const reorderedPlans = Array.from(plans);
@@ -46,8 +48,8 @@ function MyPlans() {
 
   return (
     <div className="px-6 pt-14 pb-8 max-w-6xl mx-auto">
-      {/* Header with title and Create New Plan button */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-1 sm:gap-50">
+      {/* Header with title and create new plan button */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-1 sm:gap-6">
         <h1 className="text-3xl font-bold" style={{ color: "var(--color-accent)" }}>
           My Plans
         </h1>
@@ -59,14 +61,16 @@ function MyPlans() {
         </button>
       </div>
 
-      {/* If no plans, show an empty state */}
-      {plans.length === 0 ? (
+      {/* Show empty state only if loading is false and there are no plans */}
+      {!loading && plans.length === 0 ? (
         <div className="flex flex-col items-center justify-center pt-24 text-center text-[var(--color-muted)] italic">
           <FaDumbbell size={48} className="mx-auto mb-4" />
           You have no workout plans yet.
         </div>
-      ) : (
-        // Drag and drop context for reordering plans locally
+      ) : null}
+
+      {/* Show plans once they are loaded and available */}
+      {plans.length > 0 && (
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="plans-list" direction="horizontal">
             {(provided) => (
@@ -88,33 +92,24 @@ function MyPlans() {
                         onClick={() => navigate(`/dashboard/my-plans/${plan._id}`)}
                       >
                         <div className="flex flex-col gap-2">
-                          {/* Plan Title */}
                           <h3
                             className="text-2xl font-semibold"
                             style={{ color: "var(--color-accent)" }}
                           >
                             {plan.title}
                           </h3>
-
-                          {/* Plan Description */}
                           <p className="text-lg" style={{ color: "var(--color-text)" }}>
                             {plan.description || <em>No description provided</em>}
                           </p>
-
-                          {/* Difficulty */}
                           <p className="text-sm" style={{ color: "var(--color-muted)" }}>
                             Difficulty:{" "}
                             <span style={{ color: "var(--color-accent)" }}>
                               {plan.difficulty}
                             </span>
                           </p>
-
-                          {/* Exercise count */}
                           <p className="flex items-center gap-1 text-sm text-[var(--color-text)]">
                             <FaDumbbell /> Exercises: {plan.exercises.length}
                           </p>
-
-                          {/* Workout dates */}
                           <div className="mt-3">
                             <h4
                               className="font-semibold mb-2 flex items-center gap-2"
@@ -154,4 +149,5 @@ function MyPlans() {
     </div>
   );
 }
+
 export default MyPlans;

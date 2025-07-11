@@ -11,18 +11,19 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-// Get the API URL from environment variables
+// Load API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Profile() {
-  const { user, logoutUser } = useContext(AuthContext); // Get user data and logout function from AuthContext
+  const { user, logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // State for counting workout plans and storing the latest 3
   const [plansCount, setPlansCount] = useState(0);
   const [recentPlans, setRecentPlans] = useState([]);
 
-  // Fetch the user's workout plans when the user is available
+  /**
+   * Fetch user's workout plans for displaying statistics and recent plans
+   */
   useEffect(() => {
     const fetchPlans = async () => {
       if (!user || !user._id) return;
@@ -43,7 +44,7 @@ function Profile() {
     fetchPlans();
   }, [user]);
 
-  // Display loading state while user data is unavailable
+  // Show loading state if user is not yet loaded
   if (!user) {
     return (
       <div className="flex justify-center items-center min-h-[60vh] text-[var(--color-text)]">
@@ -52,12 +53,14 @@ function Profile() {
     );
   }
 
-  // Generate avatar URL using UI Avatars
+  const avatarName = user.name || user.email || "User";
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-    user?.name || "User"
+    avatarName
   )}&background=FF6B00&color=fff&size=128`;
 
-  const firstName = user?.name ? user.name.split(" ")[0] : "User";
+  const firstName = user.name
+    ? user.name.split(" ")[0]
+    : user.email?.split("@")[0] || "User";
 
   return (
     <div
@@ -65,15 +68,15 @@ function Profile() {
       style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
     >
       {/* Profile Header */}
-      <div className="flex flex-col items-center mb-6 text-center mt-4">
-        <div className="rounded-full border-4 border-white p-1.5 shadow mt-4">
+      <div className="flex flex-col items-center mb-6 text-center mt-6">
+        <div className="rounded-full border-4 border-white p-1.5 shadow mb-3 mt-4">
           <img
             src={avatarUrl}
-            alt={user?.name || "User Avatar"}
+            alt={avatarName}
             className="w-24 h-24 rounded-full object-cover"
           />
         </div>
-        <h1 className="text-2xl font-bold mb-1 text-[var(--color-accent)] flex items-center gap-2 mt-3">
+        <h1 className="text-2xl font-bold mb-1 text-[var(--color-accent)] flex items-center gap-2">
           <FaUser /> Your Profile
         </h1>
         <p className="text-sm text-[var(--color-muted)]">
@@ -84,10 +87,13 @@ function Profile() {
       {/* User Information */}
       <div className="mb-7 space-y-2 text-sm">
         <p className="flex items-center gap-2">
-          <FaUser className="text-[var(--color-accent)]" /> <strong>Name:</strong> {user?.name || "N/A"}
+          <FaUser className="text-[var(--color-accent)]" />{" "}
+          <strong>Name:</strong>{" "}
+          {user.name || "N/A"}
         </p>
         <p className="flex items-center gap-2">
-          <FaEnvelope className="text-[var(--color-accent)]" /> <strong>Email:</strong> {user?.email || "N/A"}
+          <FaEnvelope className="text-[var(--color-accent)]" />{" "}
+          <strong>Email:</strong> {user.email || "N/A"}
         </p>
       </div>
 
@@ -103,7 +109,7 @@ function Profile() {
         </p>
       </div>
 
-      {/* Recent Workout Plans List */}
+      {/* Recent Workout Plans */}
       {recentPlans.length > 0 && (
         <div className="mb-6">
           <h2 className="text-base font-semibold text-[var(--color-accent)] mb-2 flex items-center gap-2">
@@ -124,7 +130,7 @@ function Profile() {
         </div>
       )}
 
-      {/* Action Buttons: Change Password and Logout */}
+      {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-3 mt-6">
         <button
           onClick={() => navigate("/dashboard/change-password")}
@@ -132,7 +138,6 @@ function Profile() {
         >
           <FaLock /> Change Password
         </button>
-
         <button
           onClick={logoutUser}
           className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm shadow transition w-full sm:w-auto"
