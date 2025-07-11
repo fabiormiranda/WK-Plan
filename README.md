@@ -163,13 +163,13 @@ WK-Plan is a **full-stack workout planner** where users can create personalized 
 
 ### Homepage
 
-![WK-Plan Home](assets/home-screenshot.png)
+![WK-Plan Home](src/assets/home-screenshot.png)
 
 ### Exercises Dashboard
 
-![WK-Plan Exercises](assets/dashboard-exercises.png)
+![WK-Plan Exercises](src/assets/dashboard-exercises.png)
 
 ### Create Plan Page
 
-![WK-Plan Create Plan](assets/create-plan.png)
+![WK-Plan Create Plan](src/assets/create-plan.png)
 
