@@ -15,6 +15,8 @@ import DeleteExercise from "./pages/dashboard/DeleteExercise";
 import MyPlans from "./pages/dashboard/MyPlans";
 import MyPlanDetail from "./pages/dashboard/MyPlanDetail";
 import CreatePlan from "./pages/dashboard/CreatePlan";
+import DeletePlan from "./pages/dashboard/DeletePlan";
+import EditPlan from "./pages/dashboard/EditPlan"
 import Profile from "./pages/dashboard/Profile";
 import ChangePassword from "./pages/dashboard/ChangePassword";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -57,6 +59,8 @@ function App() {
               <Route path="delete-exercise/:exerciseId" element={<DeleteExercise />} />
               <Route path="my-plans" element={<MyPlans />} />
               <Route path="my-plans/:planId" element={<MyPlanDetail />} />
+              <Route path="delete-plan/:planId" element={<DeletePlan />} />
+              <Route path="edit-plan/:planId" element={<EditPlan />} />
               <Route path="profile" element={<Profile />} />
               <Route path="change-password" element={<ChangePassword />} />
               {/* Dashboard 404 */}

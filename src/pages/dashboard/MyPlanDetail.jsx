@@ -11,352 +11,113 @@ function MyPlanDetail() {
   const { planId } = useParams();
   const navigate = useNavigate();
 
-  // State for managing plan and form fields
   const [plan, setPlan] = useState(null);
-  const [allExercises, setAllExercises] = useState([]);
-  const [editMode, setEditMode] = useState(false);
-  const [selectedExercises, setSelectedExercises] = useState([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [difficulty, setDifficulty] = useState("easy");
-  const [selectedExercise, setSelectedExercise] = useState(null);
-  const [categoryFilter, setCategoryFilter] = useState("");
-
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(false);
 
-  // Fetch plan details and exercises on mount
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPlan = async () => {
       const token = localStorage.getItem("token");
       try {
-        // Fetch the workout plan by ID
         const res = await axios.get(`${API_URL}/workout-plans/${planId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPlan(res.data);
-        setTitle(res.data.title);
-        setDescription(res.data.description || "");
-        setDifficulty(res.data.difficulty || "easy");
-        setSelectedExercises(res.data.exercises.map((ex) => ex._id));
-
-        // Fetch all exercises for selection
-        const exRes = await axios.get(`${API_URL}/exercises`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setAllExercises(exRes.data);
       } catch {
         toast.error("Failed to load plan data.");
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
+    fetchPlan();
   }, [planId]);
 
-  // Toggle exercise selection when checkbox is clicked
-  const handleCheckboxChange = (exerciseId) => {
-    setSelectedExercises((prev) =>
-      prev.includes(exerciseId)
-        ? prev.filter((id) => id !== exerciseId)
-        : [...prev, exerciseId]
-    );
-  };
-
-  // Format date for display (e.g., Mon, Jul 15)
   const formatDate = (dateStr) => {
     const options = { weekday: "short", month: "short", day: "numeric" };
     return new Date(dateStr).toLocaleDateString("en-US", options);
   };
 
-  // Handle updating the workout plan
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    setActionLoading(true);
-
-    try {
-      // Update workout plan
-      await axios.put(
-        `${API_URL}/workout-plans/${planId}`,
-        { title, description, difficulty, exercises: selectedExercises },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      // Refresh the updated plan
-      const res = await axios.get(`${API_URL}/workout-plans/${planId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setPlan(res.data);
-
-      setTimeout(() => {
-        toast.success("Workout plan updated successfully.");
-        setEditMode(false);
-        setActionLoading(false);
-      }, 1500);
-    } catch {
-      setTimeout(() => {
-        toast.error("Failed to update the workout plan.");
-        setActionLoading(false);
-      }, 1500);
-    }
-  };
-
-  // Handle deleting the workout plan
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this plan?")) return;
-    const token = localStorage.getItem("token");
-    setActionLoading(true);
-
-    try {
-      await axios.delete(`${API_URL}/workout-plans/${planId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setTimeout(() => {
-        toast("Workout plan deleted.", {
-          icon: "🗑️",
-          style: { borderRadius: "8px", background: "#fee2e2", color: "#b91c1c" },
-        });
-        navigate("/dashboard/my-plans");
-        setActionLoading(false);
-      }, 1500);
-    } catch {
-      setTimeout(() => {
-        toast.error("Failed to delete the workout plan.");
-        setActionLoading(false);
-      }, 1500);
-    }
-  };
-
-  // Filter categories for the dropdown
-  const categories = Array.from(new Set(allExercises.map((ex) => ex.category))).sort();
-
-  // Apply category filter if selected
-  const filteredExercises = categoryFilter
-    ? allExercises.filter(
-        (ex) => ex.category.toLowerCase() === categoryFilter.toLowerCase()
-      )
-    : allExercises;
-
-  if (loading || actionLoading) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <div
       className="max-w-4xl mx-auto mt-8 px-6 pt-12 pb-12 rounded-lg shadow-lg"
       style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
     >
-      {/* Page Title */}
       <h1 className="text-2xl sm:text-3xl font-extrabold mb-8 text-[var(--color-accent)]">
         Workout Plan Details
       </h1>
 
-      {/* ================= DISPLAY MODE ================= */}
-      {!editMode ? (
-        <>
-          {/* Plan Information */}
-          <section className="mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold mb-1 text-[var(--color-accent)]">
-              {plan.title}
-            </h2>
-            <p className="text-base mb-1 text-[var(--color-muted)] italic">
-              {plan.description || "No description provided."}
-            </p>
-            <p className="text-sm">
-              Difficulty:{" "}
-              <span style={{ color: "var(--color-accent)" }}>{plan.difficulty}</span>
-            </p>
-          </section>
+      {/* Plan Info */}
+      <section className="mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold mb-1 text-[var(--color-accent)]">{plan.title}</h2>
+        <p className="text-base mb-1 text-[var(--color-muted)] italic">{plan.description || "No description provided."}</p>
+        <p className="text-sm">
+          Difficulty: <span style={{ color: "var(--color-accent)" }}>{plan.difficulty}</span>
+        </p>
+      </section>
 
-          {/* Exercises List */}
-          <section className="mb-8">
-            <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">
-              Exercises
-            </h3>
-            {plan.exercises.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {plan.exercises.map((ex) => (
-                  <div
-                    key={ex._id}
-                    onClick={() => setSelectedExercise(ex)}
-                    className="flex items-center gap-3 bg-[var(--color-bg)] rounded-lg p-3 shadow hover:shadow-md hover:scale-[1.01] transition cursor-pointer"
-                  >
-                    <img
-                      src={ex.mediaUrl || "/assets/placeholder.png"}
-                      alt={ex.name}
-                      onError={(e) => (e.target.src = "/assets/placeholder.png")}
-                      className="w-20 h-20 object-cover rounded-md"
-                    />
-                    <div className="flex flex-col justify-center">
-                      <p className="text-base font-medium">{ex.name}</p>
-                      <p className="text-sm text-[var(--color-muted)]">{ex.category}</p>
-                    </div>
-                  </div>
-                ))}
+      {/* Exercises */}
+      <section className="mb-8">
+        <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">Exercises</h3>
+        {plan.exercises.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {plan.exercises.map((ex) => (
+              <div
+                key={ex._id}
+                className="flex items-center gap-3 bg-[var(--color-bg)] rounded-lg p-3 shadow"
+              >
+                <img
+                  src={ex.mediaUrl || "/assets/placeholder.png"}
+                  alt={ex.name}
+                  onError={(e) => (e.target.src = "/assets/placeholder.png")}
+                  className="w-20 h-20 object-cover rounded-md"
+                />
+                <div className="flex flex-col justify-center">
+                  <p className="text-base font-medium">{ex.name}</p>
+                  <p className="text-sm text-[var(--color-muted)]">{ex.category}</p>
+                </div>
               </div>
-            ) : (
-              <p className="italic text-[var(--color-muted)]">No exercises added to this plan.</p>
-            )}
-          </section>
-
-          {/* Workout Dates */}
-          <section className="mb-8">
-            <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">
-              Workout Dates
-            </h3>
-            {plan.dates && plan.dates.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {plan.dates.map((date) => (
-                  <span
-                    key={date}
-                    className="px-3 py-1 rounded-full text-xs font-semibold bg-[var(--color-accent)] text-white shadow transition transform hover:scale-105"
-                  >
-                    {formatDate(date)}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="italic text-[var(--color-muted)]">No workout dates set.</p>
-            )}
-          </section>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              className="flex items-center justify-center gap-2 px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto"
-              onClick={() => setEditMode(true)}
-            >
-              <FaEdit size={14} /> Edit Plan
-            </button>
-            <button
-              className="flex items-center justify-center gap-2 px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto"
-              onClick={handleDelete}
-            >
-              <FaTrash size={14} /> Delete Plan
-            </button>
+            ))}
           </div>
-        </>
-      ) : (
-        /* ================= EDIT MODE ================= */
-        <form onSubmit={handleUpdate} className="space-y-4">
-          {/* Title and Description Inputs */}
-          {[{ label: "Title:", value: title, setter: setTitle, required: true, placeholder: "Plan title" },
-            { label: "Description:", value: description, setter: setDescription, placeholder: "Description" }
-          ].map((field, idx) => (
-            <div key={idx}>
-              <label className="block font-semibold mb-1 text-sm">{field.label}</label>
-              <input
-                className="block w-full p-3 rounded bg-white text-black border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
-                value={field.value}
-                onChange={(e) => field.setter(e.target.value)}
-                placeholder={field.placeholder}
-                required={field.required || false}
-              />
-            </div>
-          ))}
+        ) : (
+          <p className="italic text-[var(--color-muted)]">No exercises added to this plan.</p>
+        )}
+      </section>
 
-          {/* Difficulty Dropdown */}
-          <div>
-            <label className="block font-semibold mb-1 text-sm">Difficulty:</label>
-            <select
-              className="block w-full p-3 rounded bg-white text-black border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              required
-            >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
+      {/* Dates */}
+      <section className="mb-8">
+        <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">Workout Dates</h3>
+        {plan.dates && plan.dates.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {plan.dates.map((date) => (
+              <span
+                key={date}
+                className="px-3 py-1 rounded-full text-xs font-semibold bg-[var(--color-accent)] text-white shadow"
+              >
+                {formatDate(date)}
+              </span>
+            ))}
           </div>
+        ) : (
+          <p className="italic text-[var(--color-muted)]">No workout dates set.</p>
+        )}
+      </section>
 
-          {/* Category Filter */}
-          <div>
-            <label className="block font-semibold mb-1 text-sm">Filter Exercises by Category:</label>
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="block w-full p-3 rounded bg-white text-black border border-gray-300 focus:border-[var(--color-accent)] outline-none transition"
-            >
-              <option value="">All</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Exercises Selection */}
-          <div>
-            <span className="font-semibold text-[var(--color-accent)] text-sm">Select Exercises:</span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 max-h-56 overflow-y-auto rounded border border-gray-300 p-2 bg-[var(--color-bg-card)]">
-              {filteredExercises.map((ex) => (
-                <label
-                  key={ex._id}
-                  className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition text-sm"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedExercises.includes(ex._id)}
-                    onChange={() => handleCheckboxChange(ex._id)}
-                    className="accent-[var(--color-accent)]"
-                  />
-                  <span>
-                    {ex.name}{" "}
-                    <span className="text-xs text-[var(--color-muted)]">({ex.category})</span>
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-4">
-            <button
-              type="submit"
-              className="px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto"
-            >
-              Save Changes
-            </button>
-            <button
-              type="button"
-              onClick={() => setEditMode(false)}
-              className="px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      )}
-
-      {/* Exercise Modal Preview */}
-      {selectedExercise && !editMode && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-          onClick={() => setSelectedExercise(null)}
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <button
+          className="flex items-center justify-center gap-2 px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto"
+          onClick={() => navigate(`/dashboard/edit-plan/${planId}`)}
         >
-          <div
-            className="bg-[var(--color-bg-card)] p-4 rounded-lg max-w-md w-full text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-xl font-bold mb-1 text-[var(--color-accent)]">{selectedExercise.name}</h2>
-            <p className="text-lg text-[var(--color-muted)] mb-3">{selectedExercise.category}</p>
-            <video
-              src={`/assets/gifs/${selectedExercise.name.replace(/\s+/g, "-")}.mov`}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full max-w-[350px] mx-auto rounded mb-5"
-            />
-            <button
-              onClick={() => setSelectedExercise(null)}
-              className="px-4 py-2 rounded bg-[var(--color-accent)] text-white font-semibold hover:bg-[var(--color-accent-dark)] transition text-sm"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+          <FaEdit size={14} /> Edit Plan
+        </button>
+        <button
+          className="flex items-center justify-center gap-2 px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto"
+          onClick={() => navigate(`/dashboard/delete-plan/${planId}`)}
+        >
+          <FaTrash size={14} /> Delete Plan
+        </button>
+      </div>
     </div>
   );
 }
