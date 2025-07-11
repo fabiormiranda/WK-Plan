@@ -2,19 +2,23 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaDumbbell, FaCalendarAlt, FaMobileAlt } from "react-icons/fa";
 
+// HomePage component for the public landing page of WK-Plan
 function HomePage() {
   return (
     <div className="min-h-[80vh] flex flex-col justify-center items-center px-4 bg-[var(--color-bg)] text-[var(--color-text)]">
       <div className="max-w-2xl w-full rounded-2xl shadow-xl p-8 sm:p-10 flex flex-col items-center bg-[var(--color-bg-card)]">
 
+        {/* Title */}
         <h1 className="text-3xl sm:text-4xl font-extrabold mb-4 text-center text-[var(--color-accent)]">
           Welcome to WK-Plan
         </h1>
 
+        {/* Subtitle */}
         <p className="text-base sm:text-lg text-center mb-8 text-[var(--color-muted)] max-w-xl">
-          Organize your gym workouts, create custom training plans and reach your fitness goals with simplicity and motivation!
+          Organize your gym workouts, create custom training plans, and reach your fitness goals with simplicity and motivation!
         </p>
 
+        {/* Call-to-action buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mb-10 w-full justify-center">
           <Link
             to="/signup"
@@ -30,6 +34,7 @@ function HomePage() {
           </Link>
         </div>
 
+        {/* Feature cards */}
         <div className="w-full flex flex-col sm:flex-row gap-4 sm:gap-6 justify-between">
           <Feature
             icon={<FaDumbbell size={36} className="text-white" />}
@@ -52,6 +57,7 @@ function HomePage() {
   );
 }
 
+// Feature card component for the HomePage
 function Feature({ icon, title, desc }) {
   return (
     <div
@@ -62,10 +68,15 @@ function Feature({ icon, title, desc }) {
         transition-transform transform hover:scale-105 hover:shadow-[0_0_10px_var(--color-accent)] hover:border-[var(--color-accent)]
       "
     >
+      {/* Icon */}
       <div className="mb-3">{icon}</div>
+
+      {/* Feature title */}
       <div className="font-semibold mb-2 text-[var(--color-accent)] text-center text-base sm:text-lg">
         {title}
       </div>
+
+      {/* Feature description */}
       <div className="text-xs sm:text-sm text-[var(--color-muted)] text-center max-w-[180px]">
         {desc}
       </div>

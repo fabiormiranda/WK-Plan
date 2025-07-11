@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "./styles/theme.css";
 
+/* ===== WK-Plan Global Styling ===== */
+
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -10,46 +12,46 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Roboto', sans-serif;
-  font-weight: 800; /* Títulos com peso visual */
+  font-weight: 800; /* Strong visual weight for headings */
 }
 
-/* ===== Scrollbar clean WK-Plan ===== */
+/* ===== WK-Plan Custom Scrollbar ===== */
 .my-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
 
 .my-scrollbar::-webkit-scrollbar-track {
-  background: #e0e0e0; /* Cinza claro e clean */
+  background: #e0e0e0; /* Light clean gray */
   border-radius: 4px;
 }
 
 .my-scrollbar::-webkit-scrollbar-thumb {
-  background-color: var(--color-accent); /* Verde principal */
+  background-color: var(--color-accent); /* Main accent color */
   border-radius: 4px;
-  border: 2px solid #e0e0e0; /* contorno clean */
+  border: 2px solid #e0e0e0; /* clean border */
 }
 
 .my-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-accent-dark); /* Verde escuro ao hover */
+  background-color: var(--color-accent-dark); /* Darker accent on hover */
 }
 
-/* Firefox */
+/* Firefox scrollbar */
 .my-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: var(--color-accent) #e0e0e0;
 }
 
-/* Botões do FullCalendar: fundo branco, texto vermelho, sem cortar */
+/* ===== FullCalendar Button Customization ===== */
 .fc .fc-button-primary {
   background-color: white !important;
   color: var(--color-accent) !important;
   border: 1px solid var(--color-accent) !important;
-  font-size: 0.7rem !important;          /* Compacto mas legível */
-  font-weight: 600 !important;           /* Peso moderado */
-  padding: 0.25rem 0.5rem !important;    /* Tamanho equilibrado */
+  font-size: 0.7rem !important;          /* Compact but readable */
+  font-weight: 600 !important;           /* Medium weight */
+  padding: 0.25rem 0.5rem !important;    /* Balanced padding */
   border-radius: 8px !important;
   text-transform: capitalize !important;
-  min-width: 40px !important;           /* Para evitar botões estreitos */
+  min-width: 40px !important;            /* Prevent narrow buttons */
 }
 
 .fc .fc-button-primary:hover,
@@ -68,17 +70,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .fc-toolbar-title {
-  font-size: 0.95rem !important;         /* Leitura clara */
+  font-size: 0.95rem !important;         /* Clear readability */
   color: var(--color-text) !important;
   font-weight: 700 !important;
 }
 
 .fc .fc-icon {
-  font-size: 0.85rem !important;         /* Ícones visíveis mas discretos */
+  font-size: 0.85rem !important;         /* Visible but subtle icons */
 }
 
-
-/* ===== Melhor UX geral ===== */
+/* ===== General Improved UX ===== */
 button,
 input,
 select {

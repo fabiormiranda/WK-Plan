@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import toast from "react-hot-toast";
 import Loading from "../../components/Loading";
-import { toast } from "react-hot-toast";
+import Calendar from "../dashboard/Calendar";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -20,6 +18,7 @@ function CreatePlan() {
   const [selectedDates, setSelectedDates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,8 +39,8 @@ function CreatePlan() {
       setFilteredExercises(exercises);
     } else {
       setFilteredExercises(
-        exercises.filter(
-          (ex) => ex.category.toLowerCase() === categoryFilter.toLowerCase()
+        exercises.filter((ex) =>
+          ex.category.toLowerCase() === categoryFilter.toLowerCase()
         )
       );
     }
@@ -82,7 +81,8 @@ function CreatePlan() {
       setLoadingSubmit(true);
       const token = localStorage.getItem("token");
 
-      await axios.post(`${API_URL}/workout-plans`,
+      await axios.post(
+        `${API_URL}/workout-plans`,
         {
           title: planName,
           description,
@@ -90,9 +90,7 @@ function CreatePlan() {
           exercises: selectedExercises,
           dates: selectedDates,
         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       toast.success("Workout plan created successfully!");
@@ -107,7 +105,7 @@ function CreatePlan() {
       setTimeout(() => {
         setLoadingSubmit(false);
         navigate("/dashboard/my-plans");
-      }, 1200);
+      }, 1000);
     } catch (err) {
       setLoadingSubmit(false);
       const msg = err.response?.data?.message || "Error creating plan!";
@@ -115,38 +113,23 @@ function CreatePlan() {
     }
   };
 
-  if (loading || loadingSubmit) {
-    return <Loading />;
-  }
+  if (loading || loadingSubmit) return <Loading />;
 
   return (
     <div
       className="mt-8 px-4 pt-8 pb-10 max-w-5xl mx-auto rounded-lg shadow-lg"
-      style={{
-        backgroundColor: "var(--color-bg-card)",
-        color: "var(--color-text)",
-      }}
+      style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
     >
       <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-8">
-        {/* Left: Form and Exercises */}
+        {/* LEFT SIDE */}
         <div className="flex flex-col gap-4 flex-1">
           <h1 className="text-2xl font-bold mb-4 text-[var(--color-accent)]">
             Create New Workout Plan
           </h1>
 
           {[
-            {
-              label: "Plan Name:",
-              value: planName,
-              onChange: setPlanName,
-              placeholder: "Enter your plan name",
-            },
-            {
-              label: "Description:",
-              value: description,
-              onChange: setDescription,
-              placeholder: "Short description (optional)",
-            },
+            { label: "Plan Name:", value: planName, onChange: setPlanName, placeholder: "Enter your plan name" },
+            { label: "Description:", value: description, onChange: setDescription, placeholder: "Short description (optional)" },
           ].map((field, idx) => (
             <label key={idx}>
               <span className="font-semibold mb-1 block">{field.label}</span>
@@ -186,9 +169,7 @@ function CreatePlan() {
             >
               <option value="">All</option>
               {uniqueCategories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
+                <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
           </label>
@@ -215,9 +196,7 @@ function CreatePlan() {
                   />
                   <span>
                     {ex.name}{" "}
-                    <span className="text-[var(--color-muted)] text-xs">
-                      ({ex.category})
-                    </span>
+                    <span className="text-[var(--color-muted)] text-xs">({ex.category})</span>
                   </span>
                 </label>
               ))
@@ -225,33 +204,15 @@ function CreatePlan() {
           </div>
         </div>
 
-        {/* Right: Calendar */}
+        {/* RIGHT SIDE */}
         <div className="flex flex-col w-full lg:w-[45%]">
           <h2 className="text-2xl font-bold mb-4 text-[var(--color-accent)]">
             Select Workout Dates
           </h2>
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            selectable={true}
-            dayMaxEvents={true}
-            weekends={true}
-            headerToolbar={{
-              left: "prev,next today",
-              center: "title",
-              right: "dayGridMonth,dayGridWeek",
-            }}
-            dateClick={handleDateClick}
-            validRange={{ start: new Date() }}
-            dayCellClassNames={(arg) => {
-              if (selectedDates.includes(arg.dateStr)) {
-                return "bg-[var(--color-accent)] text-white rounded";
-              }
-              return "";
-            }}
-            height={420}
-            themeSystem="standard"
-            locale="en"
+          <Calendar
+            events={[]}
+            onDateClick={handleDateClick}
+            selectedDates={selectedDates}
           />
           <button
             type="submit"

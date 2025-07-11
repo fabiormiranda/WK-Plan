@@ -11,14 +11,18 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
+// Get the API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Profile() {
-  const { user, logoutUser } = useContext(AuthContext);
+  const { user, logoutUser } = useContext(AuthContext); // Get user data and logout function from AuthContext
   const navigate = useNavigate();
+
+  // State for counting workout plans and storing the latest 3
   const [plansCount, setPlansCount] = useState(0);
   const [recentPlans, setRecentPlans] = useState([]);
 
+  // Fetch the user's workout plans when the user is available
   useEffect(() => {
     const fetchPlans = async () => {
       if (!user || !user._id) return;
@@ -39,6 +43,7 @@ function Profile() {
     fetchPlans();
   }, [user]);
 
+  // Display loading state while user data is unavailable
   if (!user) {
     return (
       <div className="flex justify-center items-center min-h-[60vh] text-[var(--color-text)]">
@@ -47,6 +52,7 @@ function Profile() {
     );
   }
 
+  // Generate avatar URL using UI Avatars
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
     user?.name || "User"
   )}&background=FF6B00&color=fff&size=128`;
@@ -58,7 +64,7 @@ function Profile() {
       className="mt-20 px-6 pb-10 max-w-md mx-auto rounded-lg shadow-lg"
       style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
     >
-      {/* Header */}
+      {/* Profile Header */}
       <div className="flex flex-col items-center mb-6 text-center mt-4">
         <div className="rounded-full border-4 border-white p-1.5 shadow mt-4">
           <img
@@ -75,7 +81,7 @@ function Profile() {
         </p>
       </div>
 
-      {/* User Info */}
+      {/* User Information */}
       <div className="mb-7 space-y-2 text-sm">
         <p className="flex items-center gap-2">
           <FaUser className="text-[var(--color-accent)]" /> <strong>Name:</strong> {user?.name || "N/A"}
@@ -85,7 +91,7 @@ function Profile() {
         </p>
       </div>
 
-      {/* Stats */}
+      {/* Workout Plans Statistics */}
       <div className="mb-6">
         <h2 className="text-base font-semibold text-[var(--color-accent)] mb-2 flex items-center gap-2">
           <FaDumbbell /> Your Stats
@@ -97,7 +103,7 @@ function Profile() {
         </p>
       </div>
 
-      {/* Recent Plans */}
+      {/* Recent Workout Plans List */}
       {recentPlans.length > 0 && (
         <div className="mb-6">
           <h2 className="text-base font-semibold text-[var(--color-accent)] mb-2 flex items-center gap-2">
@@ -118,7 +124,7 @@ function Profile() {
         </div>
       )}
 
-      {/* Action Buttons */}
+      {/* Action Buttons: Change Password and Logout */}
       <div className="flex flex-col sm:flex-row gap-3 mt-6">
         <button
           onClick={() => navigate("/dashboard/change-password")}

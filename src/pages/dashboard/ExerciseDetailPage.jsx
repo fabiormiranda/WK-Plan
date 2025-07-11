@@ -1,27 +1,31 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+// Get the API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 const ExerciseDetailPage = () => {
-  const { exerciseSlug } = useParams();
-  const [exercise, setExercise] = useState(null);
-  const [exercises, setExercises] = useState([]);
+  const { exerciseSlug } = useParams(); // Get exercise slug from URL
+  const [exercise, setExercise] = useState(null); // Selected exercise
+  const [exercises, setExercises] = useState([]); // All exercises for navigation
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Fetch exercise and exercises list on load
   useEffect(() => {
     if (location.state && location.state.exercises) {
+      // If exercises are passed via navigation state, use them
       setExercises(location.state.exercises);
       const foundExercise = location.state.exercises.find(
         (ex) => ex.name.toLowerCase().replace(/\s+/g, "-") === exerciseSlug
       );
       setExercise(foundExercise);
     } else {
+      // Otherwise, fetch from the backend
       const token = localStorage.getItem("token");
-     fetch(`${API_URL}/exercises`, {
-  headers: { Authorization: `Bearer ${token}` },
-})
+      fetch(`${API_URL}/exercises`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
         .then((res) => res.json())
         .then((data) => {
           setExercises(data);
@@ -36,10 +40,12 @@ const ExerciseDetailPage = () => {
 
   if (!exercise) return null;
 
+  // Get the current index for navigation
   const currentIndex = exercises.findIndex(
     (ex) => ex.name.toLowerCase().replace(/\s+/g, "-") === exerciseSlug
   );
 
+  // Navigate to the next exercise
   const handleNext = () => {
     const nextIndex = (currentIndex + 1) % exercises.length;
     navigate(
@@ -48,6 +54,7 @@ const ExerciseDetailPage = () => {
     );
   };
 
+  // Navigate to the previous exercise
   const handlePrev = () => {
     const prevIndex = (currentIndex - 1 + exercises.length) % exercises.length;
     navigate(
@@ -56,6 +63,7 @@ const ExerciseDetailPage = () => {
     );
   };
 
+  // Render guide with numbering if formatted
   const renderGuide = (text) => {
     if (!text || text.trim() === "") {
       return "No guide provided for this exercise.";
@@ -83,7 +91,7 @@ const ExerciseDetailPage = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 pt-12 pb-6 text-[var(--color-text)]">
       <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* Video */}
+        {/* Exercise Video */}
         <div className="flex flex-col items-start w-full lg:w-[40%]">
           <video
             src={videoSrc}
@@ -108,7 +116,7 @@ const ExerciseDetailPage = () => {
           </button>
         </div>
 
-        {/* Info */}
+        {/* Exercise Info */}
         <div className="flex-1 flex flex-col gap-6 max-w-2xl relative">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <h1
@@ -127,7 +135,7 @@ const ExerciseDetailPage = () => {
             </div>
           </div>
 
-          {/* Guide */}
+          {/* Exercise Guide */}
           <div>
             <h2 className="font-semibold mb-2 text-base text-[var(--color-accent)]">
               Guide
@@ -137,7 +145,7 @@ const ExerciseDetailPage = () => {
 
           {/* Navigation Buttons */}
           {exercises.length > 1 && (
-            <div className="flex justify-center gap-35 mt-10">
+            <div className="flex justify-center gap-8 mt-10">
               <button
                 onClick={handlePrev}
                 className="px-5 py-2 rounded bg-[var(--color-accent)] text-white hover:opacity-90 transition shadow"
@@ -153,8 +161,8 @@ const ExerciseDetailPage = () => {
             </div>
           )}
 
-          {/* Edit/Delete Buttons aligned right */}
-          <div className="flex justify-end gap-5 mt-30">
+          {/* Edit/Delete Buttons */}
+          <div className="flex justify-end gap-5 mt-10">
             <button
               onClick={() => navigate(`/dashboard/edit-exercise/${exercise._id}`)}
               className="px-4 py-2 rounded bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow"

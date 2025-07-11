@@ -3,14 +3,22 @@ import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import logo from "../assets/wk-plan-logo.png";
 
+/**
+ * Navbar component for WK-Plan.
+ * - Hides on dashboard pages.
+ * - Displays navigation links for Home, Login, and Signup.
+ * - Responsive: uses a hamburger menu on mobile.
+ */
 function Navbar() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Hide navbar on dashboard pages for a cleaner dashboard interface
   if (location.pathname.startsWith("/dashboard")) {
     return null;
   }
 
+  // Define navigation links
   const links = [
     { to: "/", label: "Home" },
     { to: "/login", label: "Login" },
@@ -25,19 +33,19 @@ function Navbar() {
         borderBottom: "1px solid var(--color-bg-card)",
       }}
     >
-      {/* Logo */}
+      {/* Logo linking to Home */}
       <div className="flex items-center gap-3">
         <Link to="/">
           <img
             src={logo}
             alt="WK-Plan logo"
             className="md:w-44 h-auto object-contain"
-            style={{ display: "block", cursor: "pointer" }}
+            style={{ cursor: "pointer" }}
           />
         </Link>
       </div>
 
-      {/* Desktop Links */}
+      {/* Desktop navigation links */}
       <div className="hidden md:flex gap-4">
         {links.map((link) => (
           <Link
@@ -54,15 +62,16 @@ function Navbar() {
         ))}
       </div>
 
-      {/* Mobile Hamburger */}
+      {/* Mobile hamburger toggle */}
       <button
         onClick={() => setMenuOpen(!menuOpen)}
         className="md:hidden p-2 rounded text-[var(--color-accent)]"
+        aria-label="Toggle menu"
       >
         {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
       </button>
 
-      {/* Mobile Menu */}
+      {/* Mobile dropdown menu */}
       {menuOpen && (
         <div
           className="absolute top-16 left-0 w-full bg-[var(--color-bg)] flex flex-col items-center gap-2 py-4 border-t border-[var(--color-accent)] md:hidden z-40"

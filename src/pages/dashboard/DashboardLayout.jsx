@@ -1,7 +1,13 @@
 import React, { useContext, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { FaClipboardList, FaCalendarAlt, FaUser, FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaClipboardList,
+  FaCalendarAlt,
+  FaUser,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 import logo from "../../assets/wk-plan-logo.png";
 
 function DashboardLayout() {
@@ -10,17 +16,18 @@ function DashboardLayout() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Handle logout and redirect to login
   const handleLogout = () => {
     logoutUser();
     navigate("/login");
   };
 
+  // Check if the current path is active for highlighting in the sidebar
   const isActive = (path) => location.pathname === path;
 
   return (
     <div className="bg-[var(--color-bg)] min-h-screen flex relative">
-
-      {/* Overlay for mobile */}
+      {/* Overlay for mobile sidebar */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
@@ -28,7 +35,7 @@ function DashboardLayout() {
         />
       )}
 
-      {/* Mobile toggle button */}
+      {/* Mobile sidebar toggle button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="fixed top-4 left-4 z-50 p-2 rounded bg-[var(--color-accent)] text-white md:hidden"
@@ -51,6 +58,7 @@ function DashboardLayout() {
           />
         </Link>
 
+        {/* Navigation */}
         <nav className="flex flex-col gap-2 flex-grow">
           {[
             { to: "/dashboard/exercises", label: "Exercises", icon: <FaClipboardList /> },
@@ -67,17 +75,23 @@ function DashboardLayout() {
                   : "hover:bg-[var(--color-accent)] hover:text-white"
               }`}
             >
-              <span className={`text-lg ${
-                isActive(item.to) ? "text-white" : "text-[var(--color-accent)]"
-              }`}>
+              <span
+                className={`text-lg ${
+                  isActive(item.to)
+                    ? "text-white"
+                    : "text-[var(--color-accent)]"
+                }`}
+              >
                 {item.icon}
               </span>
               {item.label}
             </Link>
           ))}
 
+          {/* Spacer */}
           <div className="flex-grow" />
 
+          {/* Create Plan Button */}
           <Link
             to="/dashboard/create-plan"
             onClick={() => setSidebarOpen(false)}
@@ -87,6 +101,7 @@ function DashboardLayout() {
           </Link>
         </nav>
 
+        {/* Logout Button */}
         <button
           onClick={handleLogout}
           className="mt-4 p-3 rounded-md font-semibold text-center bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white transition shadow-md"
@@ -95,7 +110,7 @@ function DashboardLayout() {
         </button>
       </aside>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <main className="flex-1 md:ml-60 px-6 sm:px-8 pb-4 pt-16 md:pt-8 bg-[var(--color-bg)] transition-all">
         <Outlet />
       </main>

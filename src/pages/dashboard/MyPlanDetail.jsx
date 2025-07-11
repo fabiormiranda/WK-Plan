@@ -9,6 +9,9 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 function MyPlanDetail() {
   const { planId } = useParams();
+  const navigate = useNavigate();
+
+  // State for managing plan and form fields
   const [plan, setPlan] = useState(null);
   const [allExercises, setAllExercises] = useState([]);
   const [editMode, setEditMode] = useState(false);
@@ -18,14 +21,16 @@ function MyPlanDetail() {
   const [difficulty, setDifficulty] = useState("easy");
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
-  const navigate = useNavigate();
 
+  // Fetch plan details and exercises on mount
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
+        // Fetch the workout plan by ID
         const res = await axios.get(`${API_URL}/workout-plans/${planId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -35,6 +40,7 @@ function MyPlanDetail() {
         setDifficulty(res.data.difficulty || "easy");
         setSelectedExercises(res.data.exercises.map((ex) => ex._id));
 
+        // Fetch all exercises for selection
         const exRes = await axios.get(`${API_URL}/exercises`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -48,52 +54,65 @@ function MyPlanDetail() {
     fetchData();
   }, [planId]);
 
+  // Toggle exercise selection when checkbox is clicked
   const handleCheckboxChange = (exerciseId) => {
     setSelectedExercises((prev) =>
-      prev.includes(exerciseId) ? prev.filter((id) => id !== exerciseId) : [...prev, exerciseId]
+      prev.includes(exerciseId)
+        ? prev.filter((id) => id !== exerciseId)
+        : [...prev, exerciseId]
     );
   };
 
+  // Format date for display (e.g., Mon, Jul 15)
   const formatDate = (dateStr) => {
     const options = { weekday: "short", month: "short", day: "numeric" };
     return new Date(dateStr).toLocaleDateString("en-US", options);
   };
 
+  // Handle updating the workout plan
   const handleUpdate = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     setActionLoading(true);
+
     try {
+      // Update workout plan
       await axios.put(
         `${API_URL}/workout-plans/${planId}`,
         { title, description, difficulty, exercises: selectedExercises },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      // Refresh the updated plan
       const res = await axios.get(`${API_URL}/workout-plans/${planId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPlan(res.data);
+
       setTimeout(() => {
         toast.success("Workout plan updated successfully.");
         setEditMode(false);
         setActionLoading(false);
-      }, 2000);
+      }, 1500);
     } catch {
       setTimeout(() => {
         toast.error("Failed to update the workout plan.");
         setActionLoading(false);
-      }, 2000);
+      }, 1500);
     }
   };
 
+  // Handle deleting the workout plan
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this plan?")) return;
     const token = localStorage.getItem("token");
     setActionLoading(true);
+
     try {
       await axios.delete(`${API_URL}/workout-plans/${planId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       setTimeout(() => {
         toast("Workout plan deleted.", {
           icon: "🗑️",
@@ -101,35 +120,41 @@ function MyPlanDetail() {
         });
         navigate("/dashboard/my-plans");
         setActionLoading(false);
-      }, 2000);
+      }, 1500);
     } catch {
       setTimeout(() => {
         toast.error("Failed to delete the workout plan.");
         setActionLoading(false);
-      }, 2000);
+      }, 1500);
     }
   };
 
+  // Filter categories for the dropdown
   const categories = Array.from(new Set(allExercises.map((ex) => ex.category))).sort();
+
+  // Apply category filter if selected
   const filteredExercises = categoryFilter
-    ? allExercises.filter((ex) => ex.category.toLowerCase() === categoryFilter.toLowerCase())
+    ? allExercises.filter(
+        (ex) => ex.category.toLowerCase() === categoryFilter.toLowerCase()
+      )
     : allExercises;
 
-  if (loading || actionLoading) {
-    return <Loading />;
-  }
+  if (loading || actionLoading) return <Loading />;
 
   return (
     <div
       className="max-w-4xl mx-auto mt-8 px-6 pt-12 pb-12 rounded-lg shadow-lg"
       style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
     >
+      {/* Page Title */}
       <h1 className="text-2xl sm:text-3xl font-extrabold mb-8 text-[var(--color-accent)]">
         Workout Plan Details
       </h1>
 
+      {/* ================= DISPLAY MODE ================= */}
       {!editMode ? (
         <>
+          {/* Plan Information */}
           <section className="mb-6">
             <h2 className="text-xl sm:text-2xl font-bold mb-1 text-[var(--color-accent)]">
               {plan.title}
@@ -143,6 +168,7 @@ function MyPlanDetail() {
             </p>
           </section>
 
+          {/* Exercises List */}
           <section className="mb-8">
             <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">
               Exercises
@@ -152,9 +178,7 @@ function MyPlanDetail() {
                 {plan.exercises.map((ex) => (
                   <div
                     key={ex._id}
-                    onClick={() => {
-                      if (!editMode) setSelectedExercise(ex);
-                    }}
+                    onClick={() => setSelectedExercise(ex)}
                     className="flex items-center gap-3 bg-[var(--color-bg)] rounded-lg p-3 shadow hover:shadow-md hover:scale-[1.01] transition cursor-pointer"
                   >
                     <img
@@ -175,6 +199,7 @@ function MyPlanDetail() {
             )}
           </section>
 
+          {/* Workout Dates */}
           <section className="mb-8">
             <h3 className="text-lg sm:text-xl font-semibold mb-3 text-[var(--color-accent)]">
               Workout Dates
@@ -195,6 +220,7 @@ function MyPlanDetail() {
             )}
           </section>
 
+          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               className="flex items-center justify-center gap-2 px-5 py-2 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md w-full sm:w-auto"
@@ -211,10 +237,11 @@ function MyPlanDetail() {
           </div>
         </>
       ) : (
+        /* ================= EDIT MODE ================= */
         <form onSubmit={handleUpdate} className="space-y-4">
-          {[
-            { label: "Title:", value: title, setter: setTitle, placeholder: "Plan title", required: true },
-            { label: "Description:", value: description, setter: setDescription, placeholder: "Description" },
+          {/* Title and Description Inputs */}
+          {[{ label: "Title:", value: title, setter: setTitle, required: true, placeholder: "Plan title" },
+            { label: "Description:", value: description, setter: setDescription, placeholder: "Description" }
           ].map((field, idx) => (
             <div key={idx}>
               <label className="block font-semibold mb-1 text-sm">{field.label}</label>
@@ -228,6 +255,7 @@ function MyPlanDetail() {
             </div>
           ))}
 
+          {/* Difficulty Dropdown */}
           <div>
             <label className="block font-semibold mb-1 text-sm">Difficulty:</label>
             <select
@@ -242,6 +270,7 @@ function MyPlanDetail() {
             </select>
           </div>
 
+          {/* Category Filter */}
           <div>
             <label className="block font-semibold mb-1 text-sm">Filter Exercises by Category:</label>
             <select
@@ -251,13 +280,12 @@ function MyPlanDetail() {
             >
               <option value="">All</option>
               {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
+                <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
           </div>
 
+          {/* Exercises Selection */}
           <div>
             <span className="font-semibold text-[var(--color-accent)] text-sm">Select Exercises:</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 max-h-56 overflow-y-auto rounded border border-gray-300 p-2 bg-[var(--color-bg-card)]">
@@ -281,6 +309,7 @@ function MyPlanDetail() {
             </div>
           </div>
 
+          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mt-4">
             <button
               type="submit"
@@ -299,6 +328,7 @@ function MyPlanDetail() {
         </form>
       )}
 
+      {/* Exercise Modal Preview */}
       {selectedExercise && !editMode && (
         <div
           className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"

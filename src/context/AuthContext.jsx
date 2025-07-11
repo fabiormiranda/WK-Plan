@@ -3,23 +3,32 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Create AuthContext to share authentication state across the app
 export const AuthContext = createContext();
 
+// AuthProvider component to wrap around your App
 export function AuthProvider({ children }) {
+  // User state: stores logged-in user data
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
+  // Token state: stores JWT token for authentication
   const [token, setToken] = useState(() => {
     return localStorage.getItem("token") || null;
   });
 
+  // Tracks if the user is logged in
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+
+  // Tracks if the authentication verification is still loading
   const [isLoading, setIsLoading] = useState(true);
+
+  // Stores potential error messages (optional use for UI feedback)
   const [error, setError] = useState(null);
 
-  // Keep localStorage updated when user or token changes
+  // Keep localStorage updated whenever user or token changes
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
@@ -34,7 +43,7 @@ export function AuthProvider({ children }) {
     }
   }, [token, user]);
 
-  // Verify token with backend on initial load
+  // Verify token with the backend when the app loads
   const authenticateUser = async () => {
     const storedToken = localStorage.getItem("token");
 
@@ -44,12 +53,12 @@ export function AuthProvider({ children }) {
           headers: { Authorization: `Bearer ${storedToken}` },
         });
 
-        console.log("Valid token, user:", response.data);
+        console.log("Token is valid, user data:", response.data);
         setUser(response.data);
         setToken(storedToken);
         setIsLoggedIn(true);
       } catch (err) {
-        console.error("Invalid or expired token", err.response?.data || err.message);
+        console.error("Invalid or expired token:", err.response?.data || err.message);
         setUser(null);
         setToken(null);
         setIsLoggedIn(false);
@@ -57,6 +66,7 @@ export function AuthProvider({ children }) {
         setIsLoading(false);
       }
     } else {
+      // No token found; user is not logged in
       setUser(null);
       setToken(null);
       setIsLoggedIn(false);
@@ -64,20 +74,21 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Login: set user and token received from backend
+  // Log in the user and set their data and token
   const loginUser = (userData, jwtToken) => {
     setUser(userData);
     setToken(jwtToken);
     setIsLoggedIn(true);
   };
 
-  // Logout: clear user and token
+  // Log out the user and clear their data and token
   const logoutUser = () => {
     setUser(null);
     setToken(null);
     setIsLoggedIn(false);
   };
 
+  // Run token verification on initial mount
   useEffect(() => {
     authenticateUser();
   }, []);

@@ -2,18 +2,22 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaPlusCircle } from "react-icons/fa";
 
+// Get the API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Exercises() {
+  // State to store exercises fetched from the backend
   const [exercises, setExercises] = useState([]);
+  // State for category filter
   const [filter, setFilter] = useState("");
   const navigate = useNavigate();
 
+  // Fetch exercises on component mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     fetch(`${API_URL}/exercises`, {
-  headers: { Authorization: `Bearer ${token}` },
-})
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((res) => res.json())
       .then((data) => {
         setExercises(data);
@@ -23,8 +27,10 @@ function Exercises() {
       });
   }, []);
 
+  // Extract and sort unique categories for the filter dropdown
   const categories = Array.from(new Set(exercises.map((ex) => ex.category))).sort();
 
+  // Filter exercises by selected category if filter is set
   const filteredExercises = filter
     ? exercises.filter((ex) => ex.category === filter)
     : exercises;
@@ -38,12 +44,11 @@ function Exercises() {
           color: "var(--color-text)",
         }}
       >
-        {/* Fixed Header */}
+        {/* Sticky Header with title and add button */}
         <div
           className="sticky top-0 z-10 py-4"
           style={{ backgroundColor: "var(--color-bg)" }}
         >
-          {/* Title + Add Button */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
             <h1
               className="text-4xl font-extrabold text-left"
@@ -60,7 +65,7 @@ function Exercises() {
             </button>
           </div>
 
-          {/* Filter */}
+          {/* Category Filter */}
           <div className="flex flex-wrap items-center gap-2">
             <label
               htmlFor="filter"
@@ -90,7 +95,7 @@ function Exercises() {
           </div>
         </div>
 
-        {/* Grid */}
+        {/* Exercises Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {filteredExercises.map((ex) => (
             <Link

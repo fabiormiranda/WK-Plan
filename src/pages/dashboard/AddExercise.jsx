@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Loading from "../../components/Loading";
 
+// Get the API URL from environment
 const API_URL = import.meta.env.VITE_API_URL;
 
 function AddExercise() {
+  // Form and loading state
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [guide, setGuide] = useState("");
@@ -16,11 +18,12 @@ function AddExercise() {
 
   const navigate = useNavigate();
 
+  // Fetch unique categories for the select input
   useEffect(() => {
     const token = localStorage.getItem("token");
     axios.get(`${API_URL}/exercises`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((res) => {
         const cats = Array.from(new Set(res.data.map((ex) => ex.category))).sort();
         setCategories(cats);
@@ -30,6 +33,7 @@ function AddExercise() {
       });
   }, []);
 
+  // Handle form submission for adding a new exercise
   const handleAddExercise = async (e) => {
     e.preventDefault();
 
@@ -44,6 +48,7 @@ function AddExercise() {
       let mediaUrl = "";
 
       if (mediaFile) {
+        // Convert image to Base64 string
         const reader = new FileReader();
         reader.onloadend = async () => {
           mediaUrl = reader.result;
@@ -62,6 +67,7 @@ function AddExercise() {
     }
   };
 
+  // Send exercise data to the backend
   const sendExercise = async (mediaUrl) => {
     const token = localStorage.getItem("token");
     await axios.post(`${API_URL}/exercises`,
@@ -91,6 +97,7 @@ function AddExercise() {
         ← Back
       </button>
 
+      {/* Page Title */}
       <h1
         className="text-2xl font-bold mb-6 text-center"
         style={{ color: "var(--color-accent)" }}
@@ -98,8 +105,9 @@ function AddExercise() {
         Add New Exercise
       </h1>
 
+      {/* Exercise Form */}
       <form onSubmit={handleAddExercise} className="space-y-4">
-        {/* Name */}
+        {/* Name Field */}
         <div>
           <label className="block font-semibold mb-1 text-sm">Name*</label>
           <input
@@ -112,7 +120,7 @@ function AddExercise() {
           />
         </div>
 
-        {/* Category */}
+        {/* Category Select */}
         <div>
           <label className="block font-semibold mb-1 text-sm">Category*</label>
           <select
@@ -130,7 +138,7 @@ function AddExercise() {
           </select>
         </div>
 
-        {/* Guide */}
+        {/* Guide Field */}
         <div>
           <label className="block font-semibold mb-1 text-sm">Guide</label>
           <input

@@ -8,18 +8,24 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 function EditExercise() {
   const { exerciseId } = useParams();
+  const navigate = useNavigate();
+
+  // Form states
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [guide, setGuide] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");
   const [categories, setCategories] = useState([]);
+
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
-
+  // Fetch exercise details and categories on component mount
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios.get(`${API_URL}/exercises/${exerciseId}`, {
+
+    // Fetch exercise details for editing
+    axios
+      .get(`${API_URL}/exercises/${exerciseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -31,18 +37,21 @@ function EditExercise() {
       })
       .catch(() => toast.error("Error fetching exercise data."));
 
-    axios.get(`${API_URL}/exercises`, {
+    // Fetch unique categories for the dropdown
+    axios
+      .get(`${API_URL}/exercises`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        const cats = Array.from(new Set(res.data.map((ex) => ex.category))).sort();
-        setCategories(cats);
+        const uniqueCategories = Array.from(
+          new Set(res.data.map((ex) => ex.category))
+        ).sort();
+        setCategories(uniqueCategories);
       })
-      .catch(() => {
-        toast.error("Error fetching categories.");
-      });
+      .catch(() => toast.error("Error fetching categories."));
   }, [exerciseId]);
 
+  // Handle form submission to update exercise
   const handleEditExercise = async (e) => {
     e.preventDefault();
 
@@ -55,22 +64,19 @@ function EditExercise() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`${API_URL}/exercises/${exerciseId}`,
+      await axios.put(
+        `${API_URL}/exercises/${exerciseId}`,
         { name, category, guide, mediaUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setTimeout(() => {
-        toast.success("Exercise updated successfully!");
-        navigate(`/dashboard/exercises/${name.toLowerCase().replace(/\s+/g, "-")}`);
-        setLoading(false);
-      }, 1000);
+      toast.success("Exercise updated successfully!");
+      navigate(`/dashboard/exercises/${name.toLowerCase().replace(/\s+/g, "-")}`);
     } catch (error) {
       console.error(error);
-      setTimeout(() => {
-        toast.error("Failed to update exercise.");
-        setLoading(false);
-      }, 1000);
+      toast.error("Failed to update exercise.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,14 +87,17 @@ function EditExercise() {
       className="max-w-lg mx-auto mt-12 p-6 rounded-lg shadow-lg relative"
       style={{ backgroundColor: "var(--color-bg-card)", color: "var(--color-text)" }}
     >
-      {/* Back Button */}
+      {/* Back button */}
       <button
-        onClick={() => navigate(`/dashboard/exercises/${name.toLowerCase().replace(/\s+/g, "-")}`)}
+        onClick={() =>
+          navigate(`/dashboard/exercises/${name.toLowerCase().replace(/\s+/g, "-")}`)
+        }
         className="absolute top-4 left-4 text-[var(--color-accent)] hover:text-white transition text-sm"
       >
         ← Back
       </button>
 
+      {/* Page title */}
       <h1
         className="text-2xl font-bold mb-6 text-center"
         style={{ color: "var(--color-accent)" }}
@@ -96,21 +105,23 @@ function EditExercise() {
         Edit Exercise
       </h1>
 
+      {/* Edit Exercise Form */}
       <form onSubmit={handleEditExercise} className="space-y-4">
-        {/* Name */}
+
+        {/* Name field */}
         <div>
           <label className="block font-semibold mb-1 text-sm">Name*</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Exercise Name"
+            placeholder="Exercise name"
             required
             className="block w-full p-3 rounded bg-white text-black border border-[var(--color-accent)] focus:outline-none transition"
           />
         </div>
 
-        {/* Category */}
+        {/* Category select */}
         <div>
           <label className="block font-semibold mb-1 text-sm">Category*</label>
           <select
@@ -128,31 +139,31 @@ function EditExercise() {
           </select>
         </div>
 
-        {/* Guide */}
+        {/* Guide field */}
         <div>
           <label className="block font-semibold mb-1 text-sm">Guide</label>
           <textarea
             value={guide}
             onChange={(e) => setGuide(e.target.value)}
-            placeholder="Guide (optional)"
-            className="block w-full p-3 rounded bg-white text-black border border-[var(--color-accent)] focus:outline-none transition"
+            placeholder="Exercise guide (optional)"
             rows={4}
+            className="block w-full p-3 rounded bg-white text-black border border-[var(--color-accent)] focus:outline-none transition"
           />
         </div>
 
-        {/* Media URL */}
+        {/* Media URL field */}
         <div>
           <label className="block font-semibold mb-1 text-sm">Media URL (optional)</label>
           <input
             type="text"
             value={mediaUrl}
             onChange={(e) => setMediaUrl(e.target.value)}
-            placeholder="Media URL"
+            placeholder="Media URL (optional)"
             className="block w-full p-3 rounded bg-white text-black border border-[var(--color-accent)] focus:outline-none transition"
           />
         </div>
 
-        {/* Button */}
+        {/* Submit button */}
         <button
           type="submit"
           className="w-full py-3 rounded font-semibold bg-white text-[var(--color-accent)] border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition shadow-md"
