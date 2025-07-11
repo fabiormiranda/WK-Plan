@@ -79,6 +79,10 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.85rem !important;         /* Visible but subtle icons */
 }
 
+.fc .fc-col-header-cell-cushion {
+  color: #b02a37 !important;
+}
+
 /* ===== General Improved UX ===== */
 button,
 input,
