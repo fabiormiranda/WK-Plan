@@ -21,7 +21,7 @@ function Profile() {
 
   useEffect(() => {
     const fetchPlans = async () => {
-      if (!user) return;
+      if (!user || !user._id) return;
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(`${API_URL}/workout-plans`, {
@@ -39,11 +39,19 @@ function Profile() {
     fetchPlans();
   }, [user]);
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh] text-[var(--color-text)]">
+        Loading profile...
+      </div>
+    );
+  }
 
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-    user.name
+    user?.name || "User"
   )}&background=FF6B00&color=fff&size=128`;
+
+  const firstName = user?.name ? user.name.split(" ")[0] : "User";
 
   return (
     <div
@@ -52,10 +60,10 @@ function Profile() {
     >
       {/* Header */}
       <div className="flex flex-col items-center mb-6 text-center mt-4">
-        <div className="rounded-full border-4 border-white p-1.5 shadow">
+        <div className="rounded-full border-4 border-white p-1.5 shadow mt-4">
           <img
             src={avatarUrl}
-            alt={user.name}
+            alt={user?.name || "User Avatar"}
             className="w-24 h-24 rounded-full object-cover"
           />
         </div>
@@ -63,17 +71,17 @@ function Profile() {
           <FaUser /> Your Profile
         </h1>
         <p className="text-sm text-[var(--color-muted)]">
-          Welcome back to WK-Plan, {user.name.split(" ")[0]}!
+          Welcome back to WK-Plan, {firstName}!
         </p>
       </div>
 
       {/* User Info */}
-      <div className="mb-6 space-y-2 text-sm">
+      <div className="mb-7 space-y-2 text-sm">
         <p className="flex items-center gap-2">
-          <FaUser className="text-[var(--color-accent)]" /> <strong>Name:</strong> {user.name}
+          <FaUser className="text-[var(--color-accent)]" /> <strong>Name:</strong> {user?.name || "N/A"}
         </p>
         <p className="flex items-center gap-2">
-          <FaEnvelope className="text-[var(--color-accent)]" /> <strong>Email:</strong> {user.email}
+          <FaEnvelope className="text-[var(--color-accent)]" /> <strong>Email:</strong> {user?.email || "N/A"}
         </p>
       </div>
 
